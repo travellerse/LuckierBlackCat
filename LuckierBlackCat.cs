@@ -1,9 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace LuckierBlackCat
 {
