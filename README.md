@@ -8,4 +8,4 @@ Remove the distance limit of black cat licking items, players automatically lick
 黒猫が舐める距離制限がなくなり、アイテムを拾えば自動的に舐められ、お祈りをすれば自動的に舐められます。
 
 ## Source
-[GitHub https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
+[[GitHub] https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
