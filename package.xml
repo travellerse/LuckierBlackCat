@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Meta>
+	<title>Luckier Black Cat</title>
+	<id>LuckierBlackCat</id>
+	<author>travellerse</author>
+	<loadPriority>100</loadPriority>
+	<version>0.23.27</version>
+	<description>
+		Luckier Black Cat
+	</description>
+</Meta>
