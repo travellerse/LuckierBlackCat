@@ -1,11 +1,11 @@
 # LuckierBlackCat
 
 ## Description
-È¥³ıºÚÃ¨ÌòÎïÆ·µÄ¾àÀëÏŞÖÆ£¬Íæ¼ÒÊ°È¡ÎïÆ·Ê±×Ô¶¯ÌòÎïÆ·£¬Æíµ»Ê±×Ô¶¯ÌòÎïÆ·¡£
+å»é™¤é»‘çŒ«èˆ”ç‰©å“çš„è·ç¦»é™åˆ¶ï¼Œç©å®¶æ‹¾å–ç‰©å“æ—¶è‡ªåŠ¨èˆ”ç‰©å“ï¼Œç¥ˆç¥·æ—¶è‡ªåŠ¨èˆ”ç‰©å“ã€‚
 
 Remove the distance limit of black cat licking items, players automatically lick items when picking up items, and automatically lick items when praying.
 
-ü\Ã¨¤¬óÂ¤á¤ë¾àëxÖÆÏŞ¤¬¤Ê¤¯¤Ê¤ê¡¢¥¢¥¤¥Æ¥à¤òÊ°¤¨¤Ğ×Ô„ÓµÄ¤ËóÂ¤á¤é¤ì¡¢¤ªÆí¤ê¤ò¤¹¤ì¤Ğ×Ô„ÓµÄ¤ËóÂ¤á¤é¤ì¤Ş¤¹¡£
+é»’çŒ«ãŒèˆã‚ã‚‹è·é›¢åˆ¶é™ãŒãªããªã‚Šã€ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ‹¾ãˆã°è‡ªå‹•çš„ã«èˆã‚ã‚‰ã‚Œã€ãŠç¥ˆã‚Šã‚’ã™ã‚Œã°è‡ªå‹•çš„ã«èˆã‚ã‚‰ã‚Œã¾ã™ã€‚
 
 ## Source
 [GitHub https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
