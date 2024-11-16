@@ -103,4 +103,31 @@ namespace LuckierBlackCat
             return true;
         }
     }
+
+    //System.Boolean ActPray::TryPray(Chara,System.Boolean)
+    //public static bool TryPray(Chara c, bool passive = false)
+    [HarmonyPatch(typeof(ActPray), "TryPray", new System.Type[] { typeof(Chara), typeof(bool) })]
+    public static class ActPrayTryPrayPatch
+    {
+        private static void Postfix(Chara c, bool passive)
+        {
+            LuckierBlackCat.Logger.LogInfo("ActPray::TryPray" + c.Name + passive);
+            foreach (Chara chara in EClass._map.charas)
+            {
+                if (chara.HasElement(1412, 1))
+                {
+                    foreach (Thing thing in c.things)
+                    {
+                        if (thing.IsEquipmentOrRanged && !thing.IsCursed && thing.rarity > Rarity.Normal && thing.GetInt(107, null) <= 0)
+                        {
+                            chara.Say("lick", chara, thing, null, null);
+                            thing.PlaySound("offering", 1f, true);
+                            thing.TryLickEnchant(chara, false);
+                            LuckierBlackCat.Logger.LogInfo("[Enchant]" + c.Name + passive + " " + thing.Name + thing.IsEquipmentOrRanged + !thing.IsCursed + " " + thing.rarity + " " + thing.GetInt(107, null));
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
