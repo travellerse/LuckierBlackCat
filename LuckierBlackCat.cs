@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 
 namespace LuckierBlackCat
 {
-    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.2.0.0")]
+    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.3.0.0")]
     [BepInProcess("Elin.exe")]
     public class LuckierBlackCat : BaseUnityPlugin
     {
