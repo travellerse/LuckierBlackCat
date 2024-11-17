@@ -3,19 +3,19 @@
 ## Description
 - 去除黑猫舔物品的距离限制
 - 玩家拾取物品时自动舔物品
-- 祈祷时自动舔物品
+- 祈祷时自动舔玩家背包里全部物品
 
 - 所有功能都需要队伍里有黑猫。
 ------------------------------------
 - Remove the distance limit for black cats to lick items
 - Automatically lick items when picking them up
-- Automatically lick items while praying
+- Automatically lick items which is in the PC's inventory while praying
 
 - All features require a black cat in the party.
 ------------------------------------
 - 黒猫が物を舐める距離の制限を撤廃します
 - プレイヤーがアイテムを拾うと自動的に舐めます
-- 祈りの時に自動的に物を舐めます
+- お祈りをすると自動的にプレイヤーのリュックの中の全てを舐めます
 
 - すべての機能はチーム内に黒猫が必要です。
 
