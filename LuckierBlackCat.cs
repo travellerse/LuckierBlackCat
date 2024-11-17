@@ -19,6 +19,7 @@ namespace LuckierBlackCat
         private ConfigEntry<bool> _enableLickWithoutDist;
         private ConfigEntry<bool> _enableLickWhenPick;
         private ConfigEntry<bool> _enableLickWhenPray;
+        private ConfigEntry<bool> _enableLickEnchant;
 
         public void Awake()
         {
@@ -28,6 +29,7 @@ namespace LuckierBlackCat
             _enableLickWithoutDist = configFile.Bind("Settings", "EnableLickWithoutDist", true, "Enable lick without distance limit.");
             _enableLickWhenPick = configFile.Bind("Settings", "EnableLickWhenPick", true, "Enable lick when pick up equipment.");
             _enableLickWhenPray = configFile.Bind("Settings", "EnableLickWhenPray", true, "Enable lick when pray.");
+            _enableLickEnchant = configFile.Bind("Settings", "EnableLickEnchant", true, "Enhanced the black cat's licking effect based on the amount of [Black Cat's Saliva].");
 
             if (_enableLickWithoutDist.Value)
             {
@@ -45,8 +47,12 @@ namespace LuckierBlackCat
                 harmony.PatchAll(typeof(ActPrayTryPrayPatch));
                 LuckierBlackCat.Logger.LogInfo("Enable lick when pray.");
             }
-            harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
-            harmony.PatchAll(typeof(ThingAddEnchantPatch));
+            if (_enableLickEnchant.Value)
+            {
+                harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
+                harmony.PatchAll(typeof(ThingAddEnchantPatch));
+                LuckierBlackCat.Logger.LogInfo("Enhanced the black cat's licking effect based on the amount of [Black Cat's Saliva].");
+            }
 
             Logger.LogInfo("Luckier Black Cat patched!");
         }
