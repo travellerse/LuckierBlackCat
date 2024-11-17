@@ -1,22 +1,50 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System.Collections.Generic;
+using System.IO;
 
 namespace LuckierBlackCat
 {
-    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.1.0.0")]
+    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.2.0.0")]
     [BepInProcess("Elin.exe")]
     public class LuckierBlackCat : BaseUnityPlugin
     {
         public static new ManualLogSource Logger;
+
+        ConfigFile configFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "LuckierBlackCat.cfg"), true);
+
+        private ConfigEntry<bool> _enableLickWithoutDist;
+        private ConfigEntry<bool> _enableLickWhenPick;
+        private ConfigEntry<bool> _enableLickWhenPray;
 
         public void Awake()
         {
             Logger = base.Logger;
             Logger.LogInfo("Luckier Black Cat loaded!");
             Harmony harmony = new Harmony("com.travellerse.plugins.LuckierBlackCat");
-            harmony.PatchAll();
+            _enableLickWithoutDist = configFile.Bind("Settings", "EnableLickWithoutDist", true, "Enable lick without distance limit.");
+            _enableLickWhenPick = configFile.Bind("Settings", "EnableLickWhenPick", true, "Enable lick when pick up equipment.");
+            _enableLickWhenPray = configFile.Bind("Settings", "EnableLickWhenPray", true, "Enable lick when pray.");
+
+            if (_enableLickWithoutDist.Value)
+            {
+                harmony.PatchAll(typeof(ThingGenTryLickChestPatch));
+                harmony.PatchAll(typeof(SpawnLootPatch));
+                LuckierBlackCat.Logger.LogInfo("Enable lick without distance limit.");
+            }
+            if (_enableLickWhenPick.Value)
+            {
+                harmony.PatchAll(typeof(CharaPickPatch));
+                LuckierBlackCat.Logger.LogInfo("Enable lick when pick up equipment.");
+            }
+            if (_enableLickWhenPray.Value)
+            {
+                harmony.PatchAll(typeof(ActPrayTryPrayPatch));
+                LuckierBlackCat.Logger.LogInfo("Enable lick when pray.");
+            }
+
             Logger.LogInfo("Luckier Black Cat patched!");
         }
     }
