@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 
 namespace LuckierBlackCat
 {
@@ -44,6 +45,8 @@ namespace LuckierBlackCat
                 harmony.PatchAll(typeof(ActPrayTryPrayPatch));
                 LuckierBlackCat.Logger.LogInfo("Enable lick when pray.");
             }
+            harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
+            harmony.PatchAll(typeof(ThingAddEnchantPatch));
 
             Logger.LogInfo("Luckier Black Cat patched!");
         }
@@ -92,6 +95,42 @@ namespace LuckierBlackCat
             return codes;
         }
     }
+
+    //System.Void Thing::TryLickEnchant(Chara,System.Boolean,Chara,BodySlot)
+    //this.AddEnchant(base.LV);  -->  this.AddEnchant(base.LV + EClass.player.CountKeyItem("well_enhance"));
+    [HarmonyPatch(typeof(Thing), "TryLickEnchant", new System.Type[] { typeof(Chara), typeof(bool), typeof(Chara), typeof(BodySlot) })]
+    public static class ThingTryLickEnchantPatch
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
+                {
+                    new CodeMatch(new OpCode?(OpCodes.Call), AccessTools.Method(typeof(Card), "get_LV"), null),
+                    new CodeMatch(new OpCode?(OpCodes.Call), AccessTools.Method(typeof(Thing), "AddEnchant"), null),
+                    }).Advance(1).InsertAndAdvance(new CodeInstruction[]
+                {
+                    //call	class Player EClass::get_player()
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(EClass), "get_player")),
+                    //ldstr	"well_enhance"
+                    new CodeInstruction(OpCodes.Ldstr, "well_enhance"),
+                    //callvirt	instance int32 Player::CountKeyItem(string)
+                    new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(Player), "CountKeyItem", new System.Type[] { typeof(string) })),
+                    //add
+                    new CodeInstruction(OpCodes.Add),
+                }).InstructionEnumeration();
+        }
+    }
+
+    //Element Thing::AddEnchant(System.Int32)
+    [HarmonyPatch(typeof(Thing), "AddEnchant", new System.Type[] { typeof(int) })]
+    public static class ThingAddEnchantPatch
+    {
+        private static void Postfix(Thing __instance, ref Element __result, int lv)
+        {
+            LuckierBlackCat.Logger.LogInfo("Thing" + __instance.Name + "::AddEnchant LV:" + lv);
+        }
+    }
+
 
     //Thing Chara::Pick(Thing,System.Boolean,System.Boolean)
     [HarmonyPatch(typeof(Chara), "Pick", new System.Type[] { typeof(Thing), typeof(bool), typeof(bool) })]
