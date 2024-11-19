@@ -178,4 +178,10 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)*.dll "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\LuckierBlackCat\"
+copy $(TargetDir)*.jpg "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\LuckierBlackCat\"
+copy $(TargetDir)*.xml "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\LuckierBlackCat\"
+copy $(TargetDir)*.md "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\LuckierBlackCat\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -2,13 +2,14 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection.Emit;
 
 namespace LuckierBlackCat
 {
-    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.3.0.0")]
+    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.4.0.0")]
     [BepInProcess("Elin.exe")]
     public class LuckierBlackCat : BaseUnityPlugin
     {
@@ -20,6 +21,7 @@ namespace LuckierBlackCat
         private ConfigEntry<bool> _enableLickWhenPick;
         private ConfigEntry<bool> _enableLickWhenPray;
         private ConfigEntry<bool> _enableLickEnchant;
+        public static ConfigEntry<int> enchantTimes;
 
         public void Awake()
         {
@@ -30,6 +32,7 @@ namespace LuckierBlackCat
             _enableLickWhenPick = configFile.Bind("Settings", "EnableLickWhenPick", true, "Enable lick when pick up equipment.");
             _enableLickWhenPray = configFile.Bind("Settings", "EnableLickWhenPray", true, "Enable lick when pray.");
             _enableLickEnchant = configFile.Bind("Settings", "EnableLickEnchant", true, "Enhanced the black cat's licking effect based on the amount of [Black Cat's Saliva].");
+            enchantTimes = configFile.Bind("Settings", "EnchantTimes", 1, "The times of enhance");
 
             if (_enableLickWithoutDist.Value)
             {
@@ -50,6 +53,7 @@ namespace LuckierBlackCat
             if (_enableLickEnchant.Value)
             {
                 harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
+                harmony.PatchAll(typeof(ThingGetEnchantPatch));
                 harmony.PatchAll(typeof(ThingAddEnchantPatch));
                 LuckierBlackCat.Logger.LogInfo("Enhanced the black cat's licking effect based on the amount of [Black Cat's Saliva].");
             }
@@ -61,7 +65,7 @@ namespace LuckierBlackCat
     [HarmonyPatch(typeof(ThingGen), "TryLickChest")]
     public static class ThingGenTryLickChestPatch
     {
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
@@ -83,7 +87,7 @@ namespace LuckierBlackCat
     [HarmonyPatch(typeof(Card), "SpawnLoot")]
     public static class SpawnLootPatch
     {
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
@@ -107,7 +111,7 @@ namespace LuckierBlackCat
     [HarmonyPatch(typeof(Thing), "TryLickEnchant", new System.Type[] { typeof(Chara), typeof(bool), typeof(Chara), typeof(BodySlot) })]
     public static class ThingTryLickEnchantPatch
     {
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             return new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
                 {
@@ -121,9 +125,48 @@ namespace LuckierBlackCat
                     new CodeInstruction(OpCodes.Ldstr, "well_enhance"),
                     //callvirt	instance int32 Player::CountKeyItem(string)
                     new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(Player), "CountKeyItem", new System.Type[] { typeof(string) })),
+                    //ldc.i4
+                    new CodeInstruction(OpCodes.Ldc_I4, LuckierBlackCat.enchantTimes.Value),
+                    //mul
+                    new CodeInstruction(OpCodes.Mul),
                     //add
                     new CodeInstruction(OpCodes.Add),
                 }).InstructionEnumeration();
+        }
+    }
+
+    //System.Tuple`2<SourceElement/Row,System.Int32> Thing::GetEnchant(System.Int32,System.Func`2<SourceElement/Row,System.Boolean>,System.Boolean)
+    //public static Tuple<SourceElement.Row, int> GetEnchant(int lv, Func<SourceElement.Row, bool> func, bool neg)
+    [HarmonyPatch(typeof(Thing), "GetEnchant",
+        new System.Type[] { typeof(int), typeof(System.Func<SourceElement.Row, bool>), typeof(bool) })]
+    public static class ThingGetEnchantPatch
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[] {
+                //ldloc.0
+                new CodeMatch(new OpCode?(OpCodes.Ldloc_0), null, null),
+                //callvirt    instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib] System.Collections.Generic.List`1<class SourceElement/Row>::GetEnumerator()
+                new CodeMatch(new OpCode?(OpCodes.Callvirt), AccessTools.Method(typeof(List<SourceElement.Row>), "GetEnumerator"), null),
+            }).Advance(1).InsertAndAdvance(new CodeInstruction[] {
+                //call    class [mscorlib] System.Collections.Generic.IList`1<!!0> [Plugins.BaseCore] ClassExtension::Shuffle<class [Elin] SourceElement/Row>(class [mscorlib] System.Collections.Generic.IList`1<!!0>)
+                //list.Shuffle<SourceElement.Row>()
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ThingGetEnchantPatch), "Shuffle", new System.Type[] { typeof(IList<SourceElement.Row>) })),
+            }).InstructionEnumeration();
+        }
+
+        //Shuffle
+        private static List<SourceElement.Row> Shuffle(IList<SourceElement.Row> list)
+        {
+            List<SourceElement.Row> list2 = new List<SourceElement.Row>(list);
+            for (int i = 0; i < list2.Count; i++)
+            {
+                int index = UnityEngine.Random.Range(i, list2.Count);
+                SourceElement.Row value = list2[i];
+                list2[i] = list2[index];
+                list2[index] = value;
+            }
+            return list2;
         }
     }
 
@@ -133,7 +176,14 @@ namespace LuckierBlackCat
     {
         private static void Postfix(Thing __instance, ref Element __result, int lv)
         {
-            LuckierBlackCat.Logger.LogInfo("Thing" + __instance.Name + "::AddEnchant LV:" + lv);
+            LuckierBlackCat.Logger.LogInfo("Thing" + "::AddEnchant name:" + __instance.Name + " LV:" + lv + " rarity:" + __instance.rarity);
+
+            //Func<SourceElement.Row, bool> func = (SourceElement.Row r) => r.IsEncAppliable(__instance.category);
+            //foreach (SourceElement.Row row in EClass.sources.elements.rows)
+            //{
+            //    if ((!row.tag.Contains("flag")) && func(row))
+            //        LuckierBlackCat.Logger.LogInfo("Element " + row.name + " chance:" + row.chance + " LV:" + row.LV + " mtp:" + row.mtp);
+            //}
         }
     }
 
