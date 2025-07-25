@@ -168,6 +168,14 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="LuckierBlackCat.cs" />
+        <Compile Include="Core\ConfigManager.cs" />
+        <Compile Include="Core\PatchManager.cs" />
+        <Compile Include="Patches\DistancePatches.cs" />
+        <Compile Include="Patches\EnchantmentPatches.cs" />
+        <Compile Include="Patches\CharacterPatches.cs" />
+        <Compile Include="Utils\BlackCatUtils.cs" />
+        <Compile Include="Utils\CollectionUtils.cs" />
+        <Compile Include="Utils\Logger.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
