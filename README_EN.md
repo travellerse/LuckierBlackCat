@@ -75,11 +75,31 @@ EnchantTimes = 1
 ## 🔗 Project Links
 
 - **GitHub Repository**: [https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
+- **Issue Tracker**: [https://github.com/travellerse/LuckierBlackCat/issues](https://github.com/travellerse/LuckierBlackCat/issues)
 - **Elin Official Page**: [https://store.steampowered.com/app/2135150/Elin/](https://store.steampowered.com/app/2135150/Elin/)
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details
+
+## ⚠️ Third-Party Copyright Notice
+
+All third-party library files contained in the `ref/` folder of this project are copyrighted by their respective owners. These files are used for development purposes only and are not covered by this project's license.
+
+### Open Source Library License Information
+
+- **0Harmony.dll**: [MIT License](https://github.com/pardeike/Harmony/blob/master/LICENSE) - Copyright © Andreas Pardeike
+- **BepInEx.Core.dll**: [LGPL-2.1 License](https://github.com/BepInEx/BepInEx/blob/master/LICENSE) - Copyright © BepInEx Contributors  
+- **BepInEx.Unity.dll**: [LGPL-2.1 License](https://github.com/BepInEx/BepInEx/blob/master/LICENSE) - Copyright © BepInEx Contributors
+- **UnityEngine.CoreModule.dll**: [Unity Reference-Only License](https://unity.com/legal/licenses/unity-reference-only-license) - Copyright © Unity Technologies
+- **UnityEngine.dll**: [Unity Reference-Only License](https://unity.com/legal/licenses/unity-reference-only-license) - Copyright © Unity Technologies
+
+### Proprietary Software
+
+- **Elin.dll**: Proprietary Software - Copyright © Lafrontier/Noa
+- **Plugins.BaseCore.dll**: Proprietary Software - Copyright © Lafrontier/Noa
+
+When using this mod, please ensure you have legitimate authorization for the corresponding games and dependency libraries. Please comply with the license terms of each open source library.
 
 ## 💖 Support the Author
 

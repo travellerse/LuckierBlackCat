@@ -75,11 +75,31 @@ EnchantTimes = 1
 ## 🔗 项目链接
 
 - **GitHub仓库**: [https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
+- **问题反馈**: [https://github.com/travellerse/LuckierBlackCat/issues](https://github.com/travellerse/LuckierBlackCat/issues)
 - **Elin官方页面**: [https://store.steampowered.com/app/2135150/Elin/](https://store.steampowered.com/app/2135150/Elin/)
 
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE.txt](LICENSE.txt) 文件了解详情
+
+## ⚠️ 第三方版权声明
+
+本项目 `ref/` 文件夹中包含的所有第三方库文件的版权归其各自的所有者所有。这些文件仅用于开发目的，不属于本项目的许可证范围。
+
+### 开源库许可证信息
+
+- **0Harmony.dll**: [MIT License](https://github.com/pardeike/Harmony/blob/master/LICENSE) - Copyright © Andreas Pardeike
+- **BepInEx.Core.dll**: [LGPL-2.1 License](https://github.com/BepInEx/BepInEx/blob/master/LICENSE) - Copyright © BepInEx Contributors  
+- **BepInEx.Unity.dll**: [LGPL-2.1 License](https://github.com/BepInEx/BepInEx/blob/master/LICENSE) - Copyright © BepInEx Contributors
+- **UnityEngine.CoreModule.dll**: [Unity Reference-Only License](https://unity.com/legal/licenses/unity-reference-only-license) - Copyright © Unity Technologies
+- **UnityEngine.dll**: [Unity Reference-Only License](https://unity.com/legal/licenses/unity-reference-only-license) - Copyright © Unity Technologies
+
+### 专有软件
+
+- **Elin.dll**: 专有软件 - Copyright © Lafrontier/Noa
+- **Plugins.BaseCore.dll**: 专有软件 - Copyright © Lafrontier/Noa
+
+使用本模组时，请确保您拥有相应游戏和依赖库的合法授权。请遵守各开源库的许可证条款。
 
 ## 💖 支持作者
 
