@@ -34,11 +34,11 @@
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\0Harmony.dll</HintPath>
+            <HintPath>ref\0Harmony.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="BepInEx.Core">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\BepInEx.Core.dll</HintPath>
+            <HintPath>ref\BepInEx.Core.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="BepInEx.Preloader.Core">
@@ -54,7 +54,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="Elin">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Elin.dll</HintPath>
+            <HintPath>ref\Elin.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Mono.Cecil">
@@ -90,7 +90,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="Plugins.BaseCore">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.BaseCore.dll</HintPath>
+            <HintPath>ref\Plugins.BaseCore.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Plugins.Calc">
@@ -154,11 +154,11 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\UnityEngine.dll</HintPath>
+            <HintPath>ref\UnityEngine.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>ref\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.UI">
@@ -182,14 +182,22 @@
         <None Include="README.md">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Include="README_EN.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Include="README_JP.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup>
-        <PostBuildEvent>
+        <PostBuildEvent>            
+            if exist "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\" (
             copy $(TargetDir)*.dll "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             copy $(TargetDir)*.jpg "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             copy $(TargetDir)*.xml "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             copy $(TargetDir)*.md "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            )
         </PostBuildEvent>
     </PropertyGroup>
 </Project>
