@@ -57,34 +57,12 @@ namespace LuckierBlackCat.Patches
             // 记录祈祷行为
             Logger.LogInfo("ActPray::TryPray " + c.Name + " - Passive: " + passive);
 
-            // 遍历地图上的所有角色，寻找有舔舐能力的黑猫
-            foreach (Chara chara in EClass._map.charas)
+            // 使用BlackCatUtils的批量处理方法
+            int lickCount = BlackCatUtils.LickAllEligibleItems(c, true);
+
+            if (lickCount > 0)
             {
-                // 检查角色是否拥有舔舐能力（元素ID 1412）
-                if (chara.HasElement(1412, 1))
-                {
-                    // 遍历祈祷角色身上的所有物品
-                    foreach (Thing thing in c.things)
-                    {
-                        // 检查物品是否符合舔舐条件
-                        if (BlackCatUtils.IsItemEligibleForLicking(thing))
-                        {
-                            // 让黑猫说出舔舐的话并播放音效
-                            chara.Say("lick", chara, thing, null, null);
-                            thing.PlaySound("offering", 1f, true);
-
-                            // 对物品进行舔舐附魔
-                            thing.TryLickEnchant(chara, false);
-
-                            // 记录附魔详细信息用于调试
-                            Logger.LogInfo("[Enchant] " + c.Name + " (Passive: " + passive + ") - " + thing.Name + " " +
-                                         "(Equipment: " + thing.IsEquipmentOrRanged + ", " +
-                                         "NotCursed: " + !thing.IsCursed + ", " +
-                                         "Rarity: " + thing.rarity + ", " +
-                                         "EnchantStatus: " + thing.GetInt(107, null) + ")");
-                        }
-                    }
-                }
+                Logger.LogInfo("Prayer triggered licking for " + lickCount + " items on " + c.Name);
             }
         }
     }

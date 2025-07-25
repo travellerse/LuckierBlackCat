@@ -1,6 +1,5 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using System.IO;
 
 namespace LuckierBlackCat.Core
 {
@@ -37,6 +36,11 @@ namespace LuckierBlackCat.Core
         /// </summary>
         public static ConfigEntry<int> EnchantTimes { get; private set; }
 
+        /// <summary>
+        /// 配置项：是否需要舔舐能力才能发挥作用
+        /// </summary>
+        public static ConfigEntry<bool> RequireLickAbility { get; private set; }
+
         #endregion
 
         #region 初始化方法
@@ -65,6 +69,9 @@ namespace LuckierBlackCat.Core
 
             EnchantTimes = configFile.Bind("Settings", "EnchantTimes", 1,
                 "The times of enhance");
+
+            RequireLickAbility = configFile.Bind("Settings", "RequireLickAbility", true,
+                "Whether the mod requires lick ability to work. If set to false, the mod will work even without black cats with lick ability.");
 
             logger.LogInfo("Configuration initialized successfully.");
         }

@@ -1,3 +1,5 @@
+using LuckierBlackCat.Core;
+
 namespace LuckierBlackCat.Utils
 {
     /// <summary>
@@ -72,6 +74,13 @@ namespace LuckierBlackCat.Utils
         /// <returns>是否成功找到黑猫并进行舔舐</returns>
         public static bool TryLickItem(Thing item, bool showMessage = true)
         {
+            // 如果不要求舔舐能力，创建虚拟黑猫进行舔舐
+            if (!ConfigManager.RequireLickAbility.Value)
+            {
+                PerformLickActionWithoutCat(item, showMessage);
+                return true;
+            }
+
             // 遍历地图上的所有角色，寻找有舔舐能力的黑猫
             foreach (Chara character in EClass._map.charas)
             {
@@ -107,6 +116,29 @@ namespace LuckierBlackCat.Utils
             Logger.LogInfo("Black cat " + blackCat.Name + " licked " + item.Name);
         }
 
+        /// <summary>
+        /// 在没有黑猫的情况下执行舔舐动作
+        /// </summary>
+        /// <param name="item">要舔舐的物品</param>
+        /// <param name="showMessage">是否显示消息和音效</param>
+        private static void PerformLickActionWithoutCat(Thing item, bool showMessage)
+        {
+            if (showMessage)
+            {
+                // 播放音效
+                item.PlaySound("offering", 1f, true);
+            }
+
+            // 对物品进行舔舐附魔，使用玩家角色作为替代
+            Chara player = EClass.pc;
+            if (player != null)
+            {
+                item.TryLickEnchant(player, false);
+                // 记录舔舐行为
+                Logger.LogInfo("Virtual black cat licked " + item.Name + " (no lick ability required)");
+            }
+        }
+
         #endregion
 
         #region 批量处理方法
@@ -120,6 +152,20 @@ namespace LuckierBlackCat.Utils
         public static int LickAllEligibleItems(Chara character, bool showMessage = true)
         {
             int lickCount = 0;
+
+            // 如果不要求舔舐能力，直接进行舔舐
+            if (!ConfigManager.RequireLickAbility.Value)
+            {
+                foreach (Thing item in character.things)
+                {
+                    if (IsItemEligibleForLicking(item))
+                    {
+                        PerformLickActionWithoutCat(item, showMessage);
+                        lickCount++;
+                    }
+                }
+                return lickCount;
+            }
 
             // 寻找有舔舐能力的黑猫
             Chara blackCat = FindBlackCatWithLickAbility();

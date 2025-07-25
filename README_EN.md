@@ -19,7 +19,8 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 
 ### ⚠️ Usage Requirements
 
-- **All functions require a party member with [Blessing of Ehekatl]**
+- **By default requires a party member with [Blessing of Ehekatl]**
+- **Can be disabled by setting `RequireLickAbility = false` in configuration**
 - Only works on equipment and ranged weapons
 - Does not work on cursed items
 - Only works on items with rarity higher than common
@@ -70,6 +71,12 @@ EnableLickEnchant = true
 # Type: Integer
 # Default: 1
 EnchantTimes = 1
+
+## Whether lick ability is required for mod functionality
+# Type: Boolean
+# Default: true
+# Description: If set to false, the mod will work even without black cats with lick ability
+RequireLickAbility = true
 ```
 
 ## 🔗 Project Links
