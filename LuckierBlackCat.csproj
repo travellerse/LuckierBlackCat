@@ -1,191 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2AD3D229-25C5-4A09-B1E8-83AAF62C5F1B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LuckierBlackCat</RootNamespace>
-    <AssemblyName>LuckierBlackCat</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\0Harmony.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx.Core">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\BepInEx.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx.Preloader.Core">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx.Preloader.Unity">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\BepInEx.Preloader.Unity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx.Unity">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\BepInEx.Unity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Elin">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Elin.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\Mono.Cecil.Mdb.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\Mono.Cecil.Pdb.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MonoMod.Utils">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\MonoMod.Utils.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.ActorSystem">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.ActorSystem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.BaseCore">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.BaseCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.Calc">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.Calc.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.Dungen">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.Dungen.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.NameGen">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.NameGen.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.NoiseSystem">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.NoiseSystem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.Sound">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.Sound.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.Tween">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.Tween.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.UI">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Plugins.Util">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\Plugins.Util.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SemanticVersioning">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\BepInEx\core\SemanticVersioning.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Core">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Elin\Elin_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="LuckierBlackCat.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="package.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="preview.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)*.dll "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-copy $(TargetDir)*.jpg "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-copy $(TargetDir)*.xml "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-copy $(TargetDir)*.md "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"</PostBuildEvent>
-  </PropertyGroup>
+<Project ToolsVersion="15.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
+            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{2AD3D229-25C5-4A09-B1E8-83AAF62C5F1B}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>LuckierBlackCat</RootNamespace>
+        <AssemblyName>LuckierBlackCat</AssemblyName>
+        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <Deterministic>true</Deterministic>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>ref\0Harmony.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BepInEx.Core">
+            <HintPath>ref\BepInEx.Core.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BepInEx.Unity">
+            <HintPath>ref\BepInEx.Unity.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Elin">
+            <HintPath>ref\Elin.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Plugins.BaseCore">
+            <HintPath>ref\Plugins.BaseCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Plugins.Sound">
+            <HintPath>ref\Plugins.Sound.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Core">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>ref\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>ref\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="LuckierBlackCat.cs" />
+        <Compile Include="Core\ConfigManager.cs" />
+        <Compile Include="Core\PatchManager.cs" />
+        <Compile Include="Patches\DistancePatches.cs" />
+        <Compile Include="Patches\EnchantmentPatches.cs" />
+        <Compile Include="Patches\CharacterPatches.cs" />
+        <Compile Include="Utils\BlackCatUtils.cs" />
+        <Compile Include="Utils\CollectionUtils.cs" />
+        <Compile Include="Utils\Logger.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="package.xml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="preview.jpg">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="LICENSE.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Include="README_EN.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Include="README_JP.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <PropertyGroup>
+        <PostBuildEvent>            
+            if exist "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\" (
+            copy $(TargetDir)*.dll "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.jpg "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.xml "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.md "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)LICENSE* "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            )
+        </PostBuildEvent>
+    </PropertyGroup>
 </Project>
