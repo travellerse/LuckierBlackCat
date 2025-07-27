@@ -25,11 +25,28 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Setup .NET Framework
+    - name: Download CI artifacts
+      id: download-artifacts
+      if: github.event_name == 'push'
+      uses: actions/download-artifact@v4
+      with:
+        name: LuckierBlackCat-Release-${{ github.sha }}
+        path: downloaded-artifacts/
+      continue-on-error: true
+
+    - name: Setup .NET Framework (if artifacts not available)
+      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
       uses: microsoft/setup-msbuild@v2
 
-    - name: Setup NuGet
+    - name: Setup NuGet (if artifacts not available)
+      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
       uses: nuget/setup-nuget@v2
+
+    - name: Restore and Build (if artifacts not available)
+      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
+      run: |
+        nuget restore LuckierBlackCat.sln
+        msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Get version from input or extract from commit
       id: get_version
@@ -64,12 +81,26 @@ jobs:
         New-Item -ItemType Directory -Path "release" -Force
         New-Item -ItemType Directory -Path "release/$packageName" -Force
         
+        # 确定源文件路径
+        if (Test-Path "downloaded-artifacts/LuckierBlackCat.dll") {
+          $sourcePath = "downloaded-artifacts"
+          Write-Host "使用CI构建的产物"
+        } else {
+          $sourcePath = "bin/Release"
+          Write-Host "使用本地构建的产物"
+        }
+        
         # 复制构建产物
-        Copy-Item "bin/Release/LuckierBlackCat.dll" "release/$packageName/"
-        Copy-Item "bin/Release/package.xml" "release/$packageName/"
-        Copy-Item "bin/Release/preview.jpg" "release/$packageName/"
-        Copy-Item "bin/Release/*.md" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "$sourcePath/LuckierBlackCat.dll" "release/$packageName/"
+        Copy-Item "$sourcePath/package.xml" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "$sourcePath/preview.jpg" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "$sourcePath/*.md" "release/$packageName/" -ErrorAction SilentlyContinue
+        
+        # 复制根目录的文档文件
         Copy-Item "LICENSE.txt" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "README.md" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "README_EN.md" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "README_JP.md" "release/$packageName/" -ErrorAction SilentlyContinue
         
         # 创建ZIP文件
         Compress-Archive -Path "release/$packageName/*" -DestinationPath "release/$packageName.zip"

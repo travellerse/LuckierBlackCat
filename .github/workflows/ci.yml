@@ -1,0 +1,78 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ dev, master ]
+  pull_request:
+    branches: [ dev, master ]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-analyze:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # SonarQube需要完整的git历史
+
+    - name: Setup .NET Framework
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore NuGet packages
+      run: nuget restore LuckierBlackCat.sln
+
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5.3.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      continue-on-error: true
+
+    - name: Build solution (Release)
+      run: msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
+
+    - name: Build solution (Debug) 
+      if: github.event_name == 'pull_request'
+      run: msbuild LuckierBlackCat.sln /p:Configuration=Debug /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
+
+    - name: Upload Release Artifacts
+      if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
+      uses: actions/upload-artifact@v4
+      with:
+        name: LuckierBlackCat-Release-${{ github.sha }}
+        path: |
+          bin/Release/LuckierBlackCat.dll
+          bin/Release/package.xml
+          bin/Release/preview.jpg
+          bin/Release/*.md
+          bin/Release/LICENSE*
+        retention-days: 30
+
+    - name: Upload Debug Artifacts
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: LuckierBlackCat-Debug-${{ github.sha }}
+        path: |
+          bin/Debug/LuckierBlackCat.dll
+          bin/Debug/package.xml
+          bin/Debug/preview.jpg
+          bin/Debug/*.md
+          bin/Release/LICENSE*
+        retention-days: 7
