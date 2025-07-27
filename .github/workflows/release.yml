@@ -55,12 +55,18 @@ jobs:
           $version = "${{ github.event.inputs.version }}"
         } else {
           # 尝试从最新的commit message中提取版本号
-          $commitMessage = git log -1 --pretty=%B
-          if ($commitMessage -match "v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
+          $commitMessage = git log -1 --pretty=%s
+          Write-Host "Commit message: $commitMessage"
+          if ($commitMessage -and $commitMessage -match "Release\s+v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
             $version = $matches[1]
+            Write-Host "Extracted version from commit: $version"
+          } elseif ($commitMessage -and $commitMessage -match "v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
+            $version = $matches[1]
+            Write-Host "Extracted version from commit: $version"
           } else {
             # 如果没有找到版本号，使用当前日期生成
             $version = "$(Get-Date -Format 'yyyy.MM.dd').$(git rev-list --count HEAD)"
+            Write-Host "Generated version: $version"
           }
         }
         echo "version=$version" >> $env:GITHUB_OUTPUT
