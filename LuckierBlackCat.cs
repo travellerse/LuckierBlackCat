@@ -10,7 +10,7 @@ namespace LuckierBlackCat
     /// Luckier Black Cat 插件主类
     /// 这是一个用于游戏 Elin 的 BepInEx 插件，主要功能是增强黑猫的舔舐效果
     /// </summary>
-    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "0.4.1.0")]
+    [BepInPlugin("com.travellerse.plugins.LuckierBlackCat", "Luckier Black Cat", "1.0.0.0")]
     [BepInProcess("Elin.exe")]
     public class LuckierBlackCat : BaseUnityPlugin
     {
@@ -29,7 +29,7 @@ namespace LuckierBlackCat
         /// <summary>
         /// 插件版本
         /// </summary>
-        public const string PLUGIN_VERSION = "0.4.1.0";
+        public const string PLUGIN_VERSION = "1.0.0.0";
 
         #endregion
 
