@@ -2,7 +2,6 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using LuckierBlackCat.Core;
-using LuckierBlackCat.Utils;
 using System.IO;
 
 namespace LuckierBlackCat
