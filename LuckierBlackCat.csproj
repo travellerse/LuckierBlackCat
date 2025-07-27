@@ -200,11 +200,11 @@
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup>
         <PostBuildEvent>            
-            if exist "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\" (
-            copy $(TargetDir)*.dll "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-            copy $(TargetDir)*.jpg "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-            copy $(TargetDir)*.xml "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
-            copy $(TargetDir)*.md "C:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            if exist "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\" (
+            copy $(TargetDir)*.dll "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.jpg "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.xml "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)*.md "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             )
         </PostBuildEvent>
     </PropertyGroup>
