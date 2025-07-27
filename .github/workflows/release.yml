@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET Framework
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+
+    - name: Get version from input or extract from commit
+      id: get_version
+      run: |
+        if ("${{ github.event.inputs.version }}" -ne "") {
+          $version = "${{ github.event.inputs.version }}"
+        } else {
+          # 尝试从最新的commit message中提取版本号
+          $commitMessage = git log -1 --pretty=%B
+          if ($commitMessage -match "v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
+            $version = $matches[1]
+          } else {
+            # 如果没有找到版本号，使用当前日期生成
+            $version = "$(Get-Date -Format 'yyyy.MM.dd').$(git rev-list --count HEAD)"
+          }
+        }
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+        echo "Release version: $version"
+
+    - name: Restore NuGet packages
+      run: nuget restore LuckierBlackCat.sln
+
+    - name: Build Release
+      run: msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Create release package
+      run: |
+        $version = "${{ steps.get_version.outputs.version }}"
+        $packageName = "LuckierBlackCat-v$version"
+        
+        # 创建发布目录
+        New-Item -ItemType Directory -Path "release" -Force
+        New-Item -ItemType Directory -Path "release/$packageName" -Force
+        
+        # 复制构建产物
+        Copy-Item "bin/Release/LuckierBlackCat.dll" "release/$packageName/"
+        Copy-Item "bin/Release/package.xml" "release/$packageName/"
+        Copy-Item "bin/Release/preview.jpg" "release/$packageName/"
+        Copy-Item "bin/Release/*.md" "release/$packageName/" -ErrorAction SilentlyContinue
+        Copy-Item "LICENSE.txt" "release/$packageName/" -ErrorAction SilentlyContinue
+        
+        # 创建ZIP文件
+        Compress-Archive -Path "release/$packageName/*" -DestinationPath "release/$packageName.zip"
+        
+        echo "package_name=$packageName" >> $env:GITHUB_OUTPUT
+        echo "package_path=release/$packageName.zip" >> $env:GITHUB_OUTPUT
+      id: package
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # 获取最新的tag
+        $latestTag = git describe --tags --abbrev=0 2>$null
+        if ($latestTag) {
+          $changelog = git log --pretty=format:"- %s" "$latestTag..HEAD"
+        } else {
+          $changelog = git log --pretty=format:"- %s" -10
+        }
+        
+        $changelogText = @"
+        ## 更新内容 / Changes
+        
+        $changelog
+        
+        ## 安装方法 / Installation
+        
+        ### 手动安装 / Manual Installation
+        1. 下载并解压 `${{ steps.package.outputs.package_name }}.zip`
+        2. 将mod文件夹放入 `Elin\Package\` 目录
+        3. 进入游戏，启用模组
+        
+        ### Steam创意工坊 / Steam Workshop
+        订阅：[Steam创意工坊页面](https://steamcommunity.com/sharedfiles/filedetails/?id=3366709105)
+        
+        ## 兼容性 / Compatibility
+        - 游戏版本 / Game Version: Elin
+        - 框架要求 / Framework: BepInEx
+        "@
+        
+        # 转义换行符用于GitHub输出
+        $changelogText = $changelogText -replace "`r`n", "%0A" -replace "`n", "%0A"
+        echo "changelog=$changelogText" >> $env:GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.get_version.outputs.version }}
+        name: LuckierBlackCat v${{ steps.get_version.outputs.version }}
+        body: ${{ steps.changelog.outputs.changelog }}
+        files: ${{ steps.package.outputs.package_path }}
+        prerelease: ${{ github.event.inputs.prerelease }}
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.package.outputs.package_name }}
+        path: release/${{ steps.package.outputs.package_name }}.zip
+        retention-days: 90

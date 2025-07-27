@@ -1,0 +1,148 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ dev, master ]
+  pull_request:
+    branches: [ dev, master ]
+
+jobs:
+  code-quality:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Framework
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+
+    - name: Restore NuGet packages
+      run: nuget restore LuckierBlackCat.sln
+
+    - name: Code Analysis
+      run: |
+        echo "=== 代码质量检查 ==="
+        
+        # 检查代码中的硬编码路径
+        echo "检查硬编码路径..."
+        $hardcodedPaths = Select-String -Path "*.cs" -Pattern "D:\\|C:\\" -AllMatches
+        if ($hardcodedPaths) {
+          Write-Warning "发现硬编码路径:"
+          $hardcodedPaths | ForEach-Object { Write-Warning "  $($_.Filename):$($_.LineNumber) - $($_.Line.Trim())" }
+        } else {
+          Write-Host "✓ 未发现硬编码路径问题" -ForegroundColor Green
+        }
+        
+        # 检查TODO和FIXME注释
+        echo "`n检查待办事项..."
+        $todos = Select-String -Path "*.cs" -Pattern "TODO|FIXME|HACK" -AllMatches
+        if ($todos) {
+          Write-Warning "发现待办事项:"
+          $todos | ForEach-Object { Write-Warning "  $($_.Filename):$($_.LineNumber) - $($_.Line.Trim())" }
+        } else {
+          Write-Host "✓ 未发现待办事项" -ForegroundColor Green
+        }
+        
+        # 检查空的catch块
+        echo "`n检查空的异常处理..."
+        $emptyCatch = Select-String -Path "*.cs" -Pattern "catch.*\{[\s]*\}" -AllMatches
+        if ($emptyCatch) {
+          Write-Warning "发现空的catch块:"
+          $emptyCatch | ForEach-Object { Write-Warning "  $($_.Filename):$($_.LineNumber) - $($_.Line.Trim())" }
+        } else {
+          Write-Host "✓ 未发现空的catch块问题" -ForegroundColor Green
+        }
+        
+        # 检查调试输出
+        echo "`n检查调试输出..."
+        $debugOutput = Select-String -Path "*.cs" -Pattern "Console\.WriteLine|Debug\.WriteLine" -AllMatches
+        if ($debugOutput) {
+          Write-Warning "发现调试输出语句:"
+          $debugOutput | ForEach-Object { Write-Warning "  $($_.Filename):$($_.LineNumber) - $($_.Line.Trim())" }
+        } else {
+          Write-Host "✓ 未发现调试输出问题" -ForegroundColor Green
+        }
+
+    - name: Build Validation
+      run: |
+        echo "=== 构建验证 ==="
+        
+        # 验证Debug构建
+        echo "验证Debug构建..."
+        msbuild LuckierBlackCat.sln /p:Configuration=Debug /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host "✓ Debug构建成功" -ForegroundColor Green
+        } else {
+          Write-Error "✗ Debug构建失败"
+          exit 1
+        }
+        
+        # 验证Release构建
+        echo "`n验证Release构建..."
+        msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host "✓ Release构建成功" -ForegroundColor Green
+        } else {
+          Write-Error "✗ Release构建失败"
+          exit 1
+        }
+
+    - name: Dependency Check
+      run: |
+        echo "=== 依赖检查 ==="
+        
+        # 检查ref目录中的依赖文件
+        $refFiles = @(
+          "ref/0Harmony.dll",
+          "ref/BepInEx.Core.dll", 
+          "ref/Elin.dll",
+          "ref/Plugins.BaseCore.dll",
+          "ref/UnityEngine.dll",
+          "ref/UnityEngine.CoreModule.dll"
+        )
+        
+        $missingFiles = @()
+        foreach ($file in $refFiles) {
+          if (-not (Test-Path $file)) {
+            $missingFiles += $file
+          }
+        }
+        
+        if ($missingFiles.Count -gt 0) {
+          Write-Warning "缺少依赖文件:"
+          $missingFiles | ForEach-Object { Write-Warning "  $_" }
+        } else {
+          Write-Host "✓ 所有依赖文件都存在" -ForegroundColor Green
+        }
+
+    - name: Package Validation
+      run: |
+        echo "=== 包验证 ==="
+        
+        # 检查必要的包文件
+        $packageFiles = @(
+          "package.xml",
+          "preview.jpg",
+          "README.md",
+          "README_EN.md", 
+          "README_JP.md",
+          "LICENSE.txt"
+        )
+        
+        $missingPackageFiles = @()
+        foreach ($file in $packageFiles) {
+          if (-not (Test-Path $file)) {
+            $missingPackageFiles += $file
+          }
+        }
+        
+        if ($missingPackageFiles.Count -gt 0) {
+          Write-Warning "缺少包文件:"
+          $missingPackageFiles | ForEach-Object { Write-Warning "  $_" }
+        } else {
+          Write-Host "✓ 所有包文件都存在" -ForegroundColor Green
+        }
