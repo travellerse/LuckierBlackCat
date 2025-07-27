@@ -44,14 +44,15 @@ jobs:
       continue-on-error: true
 
     - name: Build solution (Release)
+      if: github.ref == 'refs/heads/master'
       run: msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
 
     - name: Build solution (Debug) 
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/dev'
       run: msbuild LuckierBlackCat.sln /p:Configuration=Debug /p:Platform="Any CPU" /p:TreatWarningsAsErrors=true
 
     - name: Upload Release Artifacts
-      if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       uses: actions/upload-artifact@v4
       with:
         name: LuckierBlackCat-Release-${{ github.sha }}
@@ -64,7 +65,7 @@ jobs:
         retention-days: 30
 
     - name: Upload Debug Artifacts
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/dev'
       uses: actions/upload-artifact@v4
       with:
         name: LuckierBlackCat-Debug-${{ github.sha }}
