@@ -91,6 +91,9 @@
         <Content Include="preview.jpg">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Content Include="LICENSE.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     <ItemGroup>
         <None Include="README.md">
@@ -111,6 +114,7 @@
             copy $(TargetDir)*.jpg "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             copy $(TargetDir)*.xml "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             copy $(TargetDir)*.md "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
+            copy $(TargetDir)LICENSE* "D:\Program Files (x86)\Steam\steamapps\common\Elin\Package\$(SolutionName)\"
             )
         </PostBuildEvent>
     </PropertyGroup>
