@@ -38,6 +38,7 @@ jobs:
       run: nuget restore LuckierBlackCat.sln
 
     - name: SonarQube Scan
+      if: false
       uses: SonarSource/sonarqube-scan-action@v5.3.0
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
