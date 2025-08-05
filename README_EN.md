@@ -8,16 +8,16 @@
 
 A BepInEx mod developed for the Elin game that significantly enhances the black cat's item licking functionality, making your equipment even luckier!
 
-## 📖 Features
+## Features
 
-### 🎯 Core Functions
+### Core Functions
 
 - **Unlimited Distance Item Licking** - Removes distance restrictions for black cat item licking, can be triggered from anywhere on the map
 - **Auto-lick Picked Items** - Automatically triggers black cat item licking when the player picks up equipment
 - **Batch Licking During Prayer** - Automatically licks all eligible equipment in the player's inventory during prayer
 - **Enhanced Licking Effects** - Strengthens the black cat's licking effects based on the quantity of [Black Cat's Saliva]
 
-### ⚠️ Usage Requirements
+### Usage Requirements
 
 - **By default requires a party member with [Blessing of Ehekatl]**
 - **Can be disabled by setting `RequireLickAbility = false` in configuration**
@@ -26,7 +26,7 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 - Only works on items with rarity higher than common
 - Does not repeatedly affect items that have already been licked
 
-## 🔧 Installation
+## Installation
 
 ### Automatic Installation
 
@@ -38,7 +38,7 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 2. Place the `mod folder` into the `Elin\Package\` directory
 3. Launch the game and enable the mod
 
-## ⚙️ Configuration
+## Configuration
 
 Configuration file location: `Elin\BepInEx\config\LuckierBlackCat.cfg`
 
@@ -79,17 +79,17 @@ EnchantTimes = 1
 RequireLickAbility = true
 ```
 
-## 🔗 Project Links
+## Project Links
 
 - **GitHub Repository**: [https://github.com/travellerse/LuckierBlackCat](https://github.com/travellerse/LuckierBlackCat)
 - **Issue Tracker**: [https://github.com/travellerse/LuckierBlackCat/issues](https://github.com/travellerse/LuckierBlackCat/issues)
 - **Elin Official Page**: [https://store.steampowered.com/app/2135150/Elin/](https://store.steampowered.com/app/2135150/Elin/)
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details
 
-## ⚠️ Third-Party Copyright Notice
+## Third-Party Copyright Notice
 
 All third-party library files contained in the `ref/` folder of this project are copyrighted by their respective owners. These files are used for development purposes only and are not covered by this project's license.
 
@@ -108,6 +108,6 @@ All third-party library files contained in the `ref/` folder of this project are
 
 When using this mod, please ensure you have legitimate authorization for the corresponding games and dependency libraries. Please comply with the license terms of each open source library.
 
-## 💖 Support the Author
+## Support the Author
 
 If this mod has been helpful to you, please consider giving the project a ⭐!
