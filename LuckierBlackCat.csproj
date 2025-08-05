@@ -81,6 +81,7 @@
         <Compile Include="Patches\CharacterPatches.cs" />
         <Compile Include="Utils\BlackCatUtils.cs" />
         <Compile Include="Utils\CollectionUtils.cs" />
+        <Compile Include="Utils\EnchantmentHelper.cs" />
         <Compile Include="Utils\Logger.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

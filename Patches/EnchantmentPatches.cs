@@ -4,6 +4,7 @@ using LuckierBlackCat.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using UnityEngine;
 
 namespace LuckierBlackCat.Patches
 {
@@ -102,7 +103,7 @@ namespace LuckierBlackCat.Patches
         private static void Postfix(Thing __instance, ref Element __result, int lv)
         {
             // 记录附魔添加的详细信息，包括物品名称、等级和稀有度
-            Logger.LogInfo("Thing::AddEnchant - Name: " + __instance.Name + ", LV: " + lv + ", Rarity: " + __instance.rarity);
+            Utils.Logger.LogInfo("Thing::AddEnchant - Name: " + __instance.Name + ", LV: " + lv + ", Rarity: " + __instance.rarity);
 
             // 以下是被注释的调试代码，用于分析所有可用的附魔元素
             /*
@@ -113,6 +114,36 @@ namespace LuckierBlackCat.Patches
                     Logger.LogInfo("Element " + row.name + " - Chance: " + row.chance + ", LV: " + row.LV + ", MTP: " + row.mtp);
             }
             */
+        }
+    }
+
+    /// <summary>
+    /// 自定义附魔系统
+    /// </summary>
+    [HarmonyPatch(typeof(Thing), "TryLickEnchant",
+        new Type[] { typeof(Chara), typeof(bool), typeof(Chara), typeof(BodySlot) })]
+    public static class CustomBlackCatEnchantmentPatch
+    {
+        /// <summary>
+        /// 在舔舐附魔后执行自定义增强逻辑
+        /// </summary>
+        /// <param name="__instance">被舔舐的物品</param>
+        /// <param name="c">执行舔舐的角色</param>
+        /// <param name="msg">是否显示消息</param>
+        /// <param name="tg">目标角色</param>
+        /// <param name="slot">装备槽位</param>
+        private static bool Prefix(Thing __instance, Chara c, bool msg, Chara tg, BodySlot slot)
+        {
+            // 只对装备进行处理
+            if (!__instance.IsEquipment)
+                return false;
+
+            // 获取玩家拥有的黑猫唾液数量
+            int blackCatSalivaCount = EClass.player.CountKeyItem("well_enhance");
+
+            // ApplyEnchantment(__instance, blackCatSalivaCount);
+
+            return false;
         }
     }
 }
