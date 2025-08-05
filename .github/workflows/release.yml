@@ -121,30 +121,26 @@ jobs:
         # 获取最新的tag
         $latestTag = git describe --tags --abbrev=0 2>$null
         if ($latestTag) {
-          $changelog = git log --pretty=format:"- %s" "$latestTag..HEAD"
+          $commits = git log --pretty=format:"%s" "$latestTag..HEAD"
         } else {
-          $changelog = git log --pretty=format:"- %s" -10
+          $commits = git log --pretty=format:"%s" -10
         }
         
-        $changelogText = @"
-        ## 更新内容 / Changes
+        # 过滤掉Release相关的commit，只保留有意义的更新
+        $filteredCommits = $commits | Where-Object { 
+          $_ -notmatch "^Release\s+v?\d+" -and 
+          $_ -notmatch "^Re\s+Release" -and
+          $_ -ne "" 
+        }
         
-        $changelog
+        # 格式化changelog
+        if ($filteredCommits) {
+          $changelog = ($filteredCommits | ForEach-Object { "- $_" }) -join "`n"
+        } else {
+          $changelog = "- Initial release"
+        }
         
-        ## 安装方法 / Installation
-        
-        ### 手动安装 / Manual Installation
-        1. 下载并解压 `${{ steps.package.outputs.package_name }}.zip`
-        2. 将mod文件夹放入 `Elin\Package\` 目录
-        3. 进入游戏，启用模组
-        
-        ### Steam创意工坊 / Steam Workshop
-        订阅：[Steam创意工坊页面](https://steamcommunity.com/sharedfiles/filedetails/?id=3366709105)
-        
-        ## 兼容性 / Compatibility
-        - 游戏版本 / Game Version: Elin
-        - 框架要求 / Framework: BepInEx
-        "@
+        $changelogText = "## 更新内容 / Changes`n`n$changelog`n`n## 安装方法 / Installation`n`n### 手动安装 / Manual Installation`n1. 下载并解压 \`${{ steps.package.outputs.package_name }}.zip\``n2. 将mod文件夹放入 \`Elin\Package\\` 目录`n3. 进入游戏，启用模组`n`n### Steam创意工坊 / Steam Workshop`n订阅：[Steam创意工坊页面](https://steamcommunity.com/sharedfiles/filedetails/?id=3366709105)`n`n## 兼容性 / Compatibility`n- 游戏版本 / Game Version: Elin`n- 框架要求 / Framework: BepInEx"
         
         # 转义换行符用于GitHub输出
         $changelogText = $changelogText -replace "`r`n", "%0A" -replace "`n", "%0A"
