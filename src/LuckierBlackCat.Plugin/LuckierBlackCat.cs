@@ -100,8 +100,7 @@ namespace LuckierBlackCat
             }
             catch (System.Exception ex)
             {
-                Utils.Logger.LogError("Failed to load " + PLUGIN_NAME + ": " + ex.Message);
-                Utils.Logger.LogError("Stack trace: " + ex.StackTrace);
+                Utils.Logger.LogError("Failed to load " + PLUGIN_NAME + ":\n" + ex.ToString());
                 throw;
             }
         }

@@ -47,6 +47,23 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void PluginLogsCompleteExceptionOnLoadFailure()
+    {
+        using var assembly = LoadPlugin();
+        var pluginType = assembly.MainModule.GetType("LuckierBlackCat.LuckierBlackCat");
+        var awake = pluginType.Methods.Single(method => method.Name == "Awake");
+
+        Assert.Contains(awake.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.Name == "ToString"
+            && method.Parameters.Count == 0);
+        Assert.DoesNotContain(awake.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "System.Exception"
+            && method.Name is "get_Message" or "get_StackTrace");
+    }
+
+    [Fact]
     public void PluginGuidRemainsStable()
     {
         using var assembly = LoadPlugin();
