@@ -2,6 +2,8 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using LuckierBlackCat.Core;
+using LuckierBlackCat.Patching;
+using System.Collections.Generic;
 using System.IO;
 
 namespace LuckierBlackCat
@@ -74,9 +76,27 @@ namespace LuckierBlackCat
                 _harmony = new Harmony(PLUGIN_GUID);
 
                 // 应用补丁
-                PatchManager.ApplyPatches(_harmony, base.Logger);
+                IReadOnlyList<PatchFeatureResult> patchResults =
+                    PatchManager.ApplyPatches(_harmony, base.Logger);
 
-                Utils.Logger.LogInfo(PLUGIN_NAME + " loaded successfully!");
+                bool hasIncompatibleFeature = false;
+                foreach (PatchFeatureResult result in patchResults)
+                {
+                    if (result.Status == PatchFeatureStatus.Incompatible)
+                    {
+                        hasIncompatibleFeature = true;
+                        break;
+                    }
+                }
+
+                if (hasIncompatibleFeature)
+                {
+                    Utils.Logger.LogWarning(PLUGIN_NAME + " loaded with incompatible features disabled.");
+                }
+                else
+                {
+                    Utils.Logger.LogInfo(PLUGIN_NAME + " loaded successfully!");
+                }
             }
             catch (System.Exception ex)
             {

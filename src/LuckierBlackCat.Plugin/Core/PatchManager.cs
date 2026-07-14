@@ -1,91 +1,123 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using BepInEx.Logging;
 using HarmonyLib;
 using LuckierBlackCat.Patches;
+using LuckierBlackCat.Patching;
 
 namespace LuckierBlackCat.Core
 {
-    /// <summary>
-    /// 补丁管理器
-    /// 负责根据配置应用相应的 Harmony 补丁
-    /// </summary>
     public static class PatchManager
     {
-        /// <summary>
-        /// 应用所有补丁
-        /// </summary>
-        /// <param name="harmony">Harmony 实例</param>
-        /// <param name="logger">日志记录器</param>
-        public static void ApplyPatches(Harmony harmony, ManualLogSource logger)
+        public static IReadOnlyList<PatchFeatureResult> ApplyPatches(
+            Harmony harmony,
+            ManualLogSource logger)
         {
-            logger.LogInfo("Applying patches based on configuration...");
-
-            // 根据配置启用相应功能的补丁
-            if (ConfigManager.EnableLickWithoutDist.Value)
+            var features = new[]
             {
-                ApplyDistancePatches(harmony, logger);
+                new PatchFeature(
+                    "distance",
+                    ConfigManager.EnableLickWithoutDist.Value,
+                    ValidateDistance,
+                    () => ApplyDistance(harmony)),
+                new PatchFeature(
+                    "pickup",
+                    ConfigManager.EnableLickWhenPick.Value,
+                    ValidatePickup,
+                    () => harmony.PatchAll(typeof(CharaPickPatch))),
+                new PatchFeature(
+                    "prayer",
+                    ConfigManager.EnableLickWhenPray.Value,
+                    ValidatePrayer,
+                    () => harmony.PatchAll(typeof(ActPrayTryPrayPatch))),
+                new PatchFeature(
+                    "enchantment",
+                    ConfigManager.EnableLickEnchant.Value,
+                    ThingTryLickEnchantPatch.Validate,
+                    () => harmony.PatchAll(typeof(ThingTryLickEnchantPatch))),
+            };
+
+            var results = PatchCatalog.Apply(features, harmony.UnpatchSelf);
+            foreach (var result in results)
+            {
+                LogResult(logger, result);
             }
 
-            if (ConfigManager.EnableLickWhenPick.Value)
-            {
-                ApplyPickupPatches(harmony, logger);
-            }
-
-            if (ConfigManager.EnableLickWhenPray.Value)
-            {
-                ApplyPrayerPatches(harmony, logger);
-            }
-
-            if (ConfigManager.EnableLickEnchant.Value)
-            {
-                ApplyEnchantmentPatches(harmony, logger);
-            }
-
-            logger.LogInfo("All patches applied successfully.");
+            return results;
         }
 
-        /// <summary>
-        /// 应用无距离限制相关的补丁
-        /// </summary>
-        /// <param name="harmony">Harmony 实例</param>
-        /// <param name="logger">日志记录器</param>
-        private static void ApplyDistancePatches(Harmony harmony, ManualLogSource logger)
+        private static void ValidateDistance()
+        {
+            ThingGenTryLickChestPatch.Validate();
+            SpawnLootPatch.Validate();
+        }
+
+        private static void ApplyDistance(Harmony harmony)
         {
             harmony.PatchAll(typeof(ThingGenTryLickChestPatch));
             harmony.PatchAll(typeof(SpawnLootPatch));
-            logger.LogInfo("Distance limit patches applied.");
         }
 
-        /// <summary>
-        /// 应用拾取装备时舔舐的补丁
-        /// </summary>
-        /// <param name="harmony">Harmony 实例</param>
-        /// <param name="logger">日志记录器</param>
-        private static void ApplyPickupPatches(Harmony harmony, ManualLogSource logger)
+        private static void ValidatePickup()
         {
-            harmony.PatchAll(typeof(CharaPickPatch));
-            logger.LogInfo("Equipment pickup patches applied.");
+            RequireMethod(
+                typeof(Chara),
+                "Pick",
+                typeof(Thing),
+                false,
+                typeof(Thing),
+                typeof(bool),
+                typeof(bool));
         }
 
-        /// <summary>
-        /// 应用祈祷时舔舐的补丁
-        /// </summary>
-        /// <param name="harmony">Harmony 实例</param>
-        /// <param name="logger">日志记录器</param>
-        private static void ApplyPrayerPatches(Harmony harmony, ManualLogSource logger)
+        private static void ValidatePrayer()
         {
-            harmony.PatchAll(typeof(ActPrayTryPrayPatch));
-            logger.LogInfo("Prayer patches applied.");
+            RequireMethod(
+                typeof(ActPray),
+                "TryPray",
+                typeof(bool),
+                true,
+                typeof(Chara),
+                typeof(bool));
         }
 
-        /// <summary>
-        /// 应用增强舔舐附魔效果的补丁
-        /// </summary>
-        /// <param name="harmony">Harmony 实例</param>
-        /// <param name="logger">日志记录器</param>
-        private static void ApplyEnchantmentPatches(Harmony harmony, ManualLogSource logger)
+        private static MethodInfo RequireMethod(
+            Type declaringType,
+            string name,
+            Type returnType,
+            bool isStatic,
+            params Type[] parameterTypes)
         {
-            harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
-            logger.LogInfo("Enhanced enchantment patches applied.");
+            var method = AccessTools.Method(declaringType, name, parameterTypes);
+            if (method == null || method.ReturnType != returnType || method.IsStatic != isStatic)
+            {
+                throw new MissingMethodException(
+                    "Missing or incompatible target: "
+                    + declaringType.Name
+                    + "."
+                    + name
+                    + ".");
+            }
+
+            return method;
+        }
+
+        private static void LogResult(ManualLogSource logger, PatchFeatureResult result)
+        {
+            string message = "Patch feature " + result.Name + ": " + result.Status + ". " + result.Detail;
+            if (result.Status == PatchFeatureStatus.Incompatible)
+            {
+                logger.LogError(message);
+            }
+            else if (result.Status == PatchFeatureStatus.Disabled)
+            {
+                logger.LogInfo(message);
+            }
+            else
+            {
+                logger.LogInfo(message);
+            }
         }
     }
 }
