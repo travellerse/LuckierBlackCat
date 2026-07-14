@@ -12,4 +12,12 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LuckierBlackCat.Patching\LuckierBlackCat.Patching.csproj" />
+    <Reference Include="0Harmony">
+      <HintPath>..\..\ref\0Harmony.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

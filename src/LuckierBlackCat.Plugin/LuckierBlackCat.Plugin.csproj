@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LuckierBlackCat.Core\LuckierBlackCat.Core.csproj" />
+    <ProjectReference Include="..\LuckierBlackCat.Patching\LuckierBlackCat.Patching.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +69,7 @@
     <ItemGroup>
       <ElinPackageFile Include="$(TargetDir)LuckierBlackCat.dll" />
       <ElinPackageFile Include="$(TargetDir)LuckierBlackCat.Core.dll" />
+      <ElinPackageFile Include="$(TargetDir)LuckierBlackCat.Patching.dll" />
       <ElinPackageFile Include="$(TargetDir)package.xml" />
       <ElinPackageFile Include="$(TargetDir)preview.jpg" />
       <ElinPackageFile Include="$(TargetDir)LICENSE.txt" />

@@ -45,6 +45,7 @@ jobs:
           path: |
             bin/Release/LuckierBlackCat.dll
             bin/Release/LuckierBlackCat.Core.dll
+            bin/Release/LuckierBlackCat.Patching.dll
             bin/Release/package.xml
             bin/Release/preview.jpg
             bin/Release/*.md

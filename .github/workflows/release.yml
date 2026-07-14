@@ -99,6 +99,7 @@ jobs:
         # 复制构建产物
         Copy-Item "$sourcePath/LuckierBlackCat.dll" "release/$packageName/"
         Copy-Item "$sourcePath/LuckierBlackCat.Core.dll" "release/$packageName/"
+        Copy-Item "$sourcePath/LuckierBlackCat.Patching.dll" "release/$packageName/"
         Copy-Item "$sourcePath/package.xml" "release/$packageName/" -ErrorAction SilentlyContinue
         Copy-Item "$sourcePath/preview.jpg" "release/$packageName/" -ErrorAction SilentlyContinue
         Copy-Item "$sourcePath/*.md" "release/$packageName/" -ErrorAction SilentlyContinue
