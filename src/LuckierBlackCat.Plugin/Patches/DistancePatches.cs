@@ -11,7 +11,7 @@ namespace LuckierBlackCat.Patches
     {
         public static void Validate()
         {
-            var target = TargetMethod();
+            var target = RequireTargetMethod();
             Transform(PatchProcessor.GetCurrentInstructions(target));
         }
 
@@ -32,7 +32,7 @@ namespace LuckierBlackCat.Patches
                 "ThingGen.TryLickChest");
         }
 
-        private static MethodInfo TargetMethod()
+        private static MethodInfo RequireTargetMethod()
         {
             return AccessTools.Method(typeof(ThingGen), "TryLickChest", new Type[] { typeof(Thing) })
                 ?? throw new MissingMethodException("Missing target: ThingGen.TryLickChest(Thing).");
@@ -44,7 +44,7 @@ namespace LuckierBlackCat.Patches
     {
         public static void Validate()
         {
-            var target = TargetMethod();
+            var target = RequireTargetMethod();
             Transform(PatchProcessor.GetCurrentInstructions(target));
         }
 
@@ -65,7 +65,7 @@ namespace LuckierBlackCat.Patches
                 "Card.SpawnLoot");
         }
 
-        private static MethodInfo TargetMethod()
+        private static MethodInfo RequireTargetMethod()
         {
             return AccessTools.Method(typeof(Card), "SpawnLoot", new Type[] { typeof(Card) })
                 ?? throw new MissingMethodException("Missing target: Card.SpawnLoot(Card).");

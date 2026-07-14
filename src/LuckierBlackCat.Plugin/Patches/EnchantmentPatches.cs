@@ -15,7 +15,7 @@ namespace LuckierBlackCat.Patches
     {
         public static void Validate()
         {
-            var target = TargetMethod();
+            var target = RequireTargetMethod();
             Transform(PatchProcessor.GetCurrentInstructions(target));
         }
 
@@ -45,7 +45,7 @@ namespace LuckierBlackCat.Patches
                 ConfigManager.EnchantTimes.Value);
         }
 
-        private static MethodInfo TargetMethod()
+        private static MethodInfo RequireTargetMethod()
         {
             return AccessTools.Method(
                     typeof(Thing),

@@ -26,6 +26,27 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void AnnotatedPatchClassesDoNotDeclareDynamicTargetSelectors()
+    {
+        using var assembly = LoadPlugin();
+        var reservedSelectors = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "TargetMethod",
+            "TargetMethods",
+        };
+
+        var conflictingMethods = assembly.MainModule.Types
+            .Where(type => type.CustomAttributes.Any(attribute =>
+                attribute.AttributeType.FullName == "HarmonyLib.HarmonyPatch"))
+            .SelectMany(type => type.Methods
+                .Where(method => reservedSelectors.Contains(method.Name))
+                .Select(method => type.FullName + "." + method.Name))
+            .ToArray();
+
+        Assert.Empty(conflictingMethods);
+    }
+
+    [Fact]
     public void PluginGuidRemainsStable()
     {
         using var assembly = LoadPlugin();
