@@ -1,6 +1,6 @@
 # LuckierBlackCat - より幸運な黒猫
 
-[![バージョン](https://img.shields.io/badge/バージョン-0.4.1.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
+[![バージョン](https://img.shields.io/badge/バージョン-2.0.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
 [![ライセンス](https://img.shields.io/badge/ライセンス-MIT-green.svg)](LICENSE.txt)
 [![ゲーム](https://img.shields.io/badge/ゲーム-Elin-orange.svg)](https://store.steampowered.com/app/2135150/Elin/)
 
@@ -19,9 +19,9 @@ Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め
 
 ### 使用条件
 
-- **デフォルトではパーティメンバーが【エヘカトルの祝福】を持っている必要があります**
+- **デフォルトでは現在のマップに幸運の黒猫能力を持つキャラクターが必要です**
 - **設定で`RequireLickAbility = false`にすることで舐め能力要求を無効化できます**
-- 装備と遠距離武器にのみ有効
+- ゲームが装備品として判定するアイテムにのみ有効
 - 呪われたアイテムには無効
 - レア度が一般より高いアイテムにのみ有効
 - すでに舐められたアイテムには重複して効果なし
@@ -78,6 +78,8 @@ EnchantTimes = 1
 # 説明: falseに設定すると、舐め能力を持つ黒猫がいなくてもモッドが動作します
 RequireLickAbility = true
 ```
+
+起動時に各機能は `Applied`、`Disabled`、`Incompatible` のいずれかをログに出力します。ゲーム更新で一部のパッチが非互換になった場合、その機能を無効化し、具体的な理由を記録します。
 
 ## プロジェクトリンク
 

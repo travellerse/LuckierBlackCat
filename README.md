@@ -1,6 +1,6 @@
 # LuckierBlackCat - 更幸运的黑猫
 
-[![版本](https://img.shields.io/badge/版本-0.4.1.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
+[![版本](https://img.shields.io/badge/版本-2.0.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
 [![许可证](https://img.shields.io/badge/许可证-MIT-green.svg)](LICENSE.txt)
 [![游戏](https://img.shields.io/badge/游戏-Elin-orange.svg)](https://store.steampowered.com/app/2135150/Elin/)
 
@@ -19,9 +19,9 @@
 
 ### 使用条件
 
-- **默认情况下需要队伍里有队友拥有【艾赫卡托尔的祝福】**
+- **默认情况下当前地图需要有角色拥有幸运黑猫能力**
 - **可通过配置`RequireLickAbility = false`来关闭舔舐能力要求**
-- 只对装备和远程武器生效
+- 只对游戏判定为装备的物品生效
 - 不对被诅咒的物品生效
 - 只对稀有度高于普通的物品生效
 - 不对已经被舔过的物品重复生效
@@ -78,6 +78,8 @@ EnchantTimes = 1
 # 说明: 如果设置为false，即使没有拥有舔舐能力的黑猫也可以使用mod功能
 RequireLickAbility = true
 ```
+
+启动时日志会分别报告每项功能的 `Applied`、`Disabled` 或 `Incompatible` 状态。游戏更新导致某项补丁不兼容时，该功能会被禁用并记录具体原因，不会静默假装成功。
 
 ## 项目链接
 

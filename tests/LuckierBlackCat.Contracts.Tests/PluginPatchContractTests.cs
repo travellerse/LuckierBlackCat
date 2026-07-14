@@ -35,6 +35,26 @@ public sealed class PluginPatchContractTests
         Assert.Equal("com.travellerse.plugins.LuckierBlackCat", field.Constant);
     }
 
+    [Fact]
+    public void PluginVersionMatchesReleaseVersion()
+    {
+        using var assembly = LoadPlugin();
+        var pluginType = assembly.MainModule.GetType("LuckierBlackCat.LuckierBlackCat");
+        var field = pluginType.Fields.Single(candidate => candidate.Name == "PLUGIN_VERSION");
+
+        Assert.Equal("2.0.0.0", field.Constant);
+        Assert.Equal(new Version(2, 0, 0, 0), assembly.Name.Version);
+    }
+
+    [Fact]
+    public void PackageVersionRecordsGameAndModCompatibility()
+    {
+        var root = FindRepositoryRoot();
+        var package = File.ReadAllText(Path.Combine(root, "package.xml"));
+
+        Assert.Contains("<version>0.23.325-2.0.0</version>", package);
+    }
+
     private static AssemblyDefinition LoadPlugin()
     {
         var root = FindRepositoryRoot();
