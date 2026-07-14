@@ -44,6 +44,7 @@ jobs:
           name: LuckierBlackCat-Release-${{ github.sha }}
           path: |
             bin/Release/LuckierBlackCat.dll
+            bin/Release/LuckierBlackCat.Core.dll
             bin/Release/package.xml
             bin/Release/preview.jpg
             bin/Release/*.md

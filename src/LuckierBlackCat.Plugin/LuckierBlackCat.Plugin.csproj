@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LuckierBlackCat.Core\LuckierBlackCat.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\..\ref\0Harmony.dll</HintPath>
       <Private>false</Private>
@@ -63,6 +67,7 @@
           Condition="'$(ElinPackageDir)' != ''">
     <ItemGroup>
       <ElinPackageFile Include="$(TargetDir)LuckierBlackCat.dll" />
+      <ElinPackageFile Include="$(TargetDir)LuckierBlackCat.Core.dll" />
       <ElinPackageFile Include="$(TargetDir)package.xml" />
       <ElinPackageFile Include="$(TargetDir)preview.jpg" />
       <ElinPackageFile Include="$(TargetDir)LICENSE.txt" />
