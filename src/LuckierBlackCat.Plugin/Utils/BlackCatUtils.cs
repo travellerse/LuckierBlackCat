@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using LuckierBlackCat.Core;
 
 namespace LuckierBlackCat.Utils
@@ -51,16 +52,10 @@ namespace LuckierBlackCat.Utils
 
         public static int LickAllEligibleItems(Chara character, bool showMessage = true)
         {
-            int lickCount = 0;
-            foreach (Thing item in character.things.List(_ => true, true))
-            {
-                if (TryLickItem(item, showMessage))
-                {
-                    lickCount++;
-                }
-            }
-
-            return lickCount;
+            return character.things
+                .List(_ => true, true)
+                .Where(item => TryLickItem(item, showMessage))
+                .Count();
         }
 
         private static Chara SelectLicker()

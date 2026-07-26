@@ -133,6 +133,23 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void PrayerLickingCountsSuccessfulItemsWithLinq()
+    {
+        using var assembly = LoadPlugin();
+        var utilityType = assembly.MainModule.GetType("LuckierBlackCat.Utils.BlackCatUtils");
+        var lickAll = utilityType.Methods.Single(method => method.Name == "LickAllEligibleItems");
+
+        Assert.Contains(lickAll.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "System.Linq.Enumerable"
+            && method.Name == "Where");
+        Assert.Contains(lickAll.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "System.Linq.Enumerable"
+            && method.Name == "Count");
+    }
+
+    [Fact]
     public void SuccessfulItemLicksUseDebugLogging()
     {
         using var assembly = LoadPlugin();
