@@ -1,6 +1,7 @@
+---
 name: Release
 
-on:
+"on":
   push:
     tags: ["v*"]
   workflow_dispatch:
@@ -59,15 +60,20 @@ jobs:
         run: |
           $version = "${{ steps.version.outputs.value }}"
           $package = Get-Content package.xml -Raw
-          if ($package -notmatch "<version>0\.23\.325-$([regex]::Escape($version))</version>") {
-            throw "package.xml does not target Elin 23.325 and mod $version."
+          $expectedVersion = [regex]::Escape($version)
+          $versionPattern = "<version>0\.23\.325-$expectedVersion</version>"
+          if ($package -notmatch $versionPattern) {
+            throw "package.xml is incompatible with mod $version."
           }
 
       - name: Restore
         run: dotnet restore LuckierBlackCat.sln
 
       - name: Build
-        run: dotnet build LuckierBlackCat.sln --configuration Release --no-restore
+        run: >-
+          dotnet build LuckierBlackCat.sln
+          --configuration Release
+          --no-restore
 
       - name: Test
         run: dotnet test LuckierBlackCat.sln --configuration Release --no-build
@@ -79,7 +85,8 @@ jobs:
           $version = "${{ steps.version.outputs.value }}"
           $packageName = "LuckierBlackCat-v$version"
           $packageDirectory = Join-Path release $packageName
-          New-Item -ItemType Directory -Path $packageDirectory -Force | Out-Null
+          New-Item -ItemType Directory -Path $packageDirectory -Force |
+            Out-Null
 
           $files = @(
             "bin/Release/LuckierBlackCat.dll",
@@ -120,4 +127,4 @@ jobs:
           name: LuckierBlackCat v${{ steps.version.outputs.value }}
           generate_release_notes: true
           files: ${{ steps.package.outputs.path }}
-          prerelease: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || false }}
+          prerelease: ${{ inputs.prerelease || false }}
