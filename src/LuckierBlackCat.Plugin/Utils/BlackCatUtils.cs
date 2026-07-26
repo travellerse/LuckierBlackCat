@@ -43,7 +43,7 @@ namespace LuckierBlackCat.Utils
 
             if (changed)
             {
-                Logger.LogInfo("Licker " + licker.Name + " enchanted " + item.Name);
+                Logger.LogDebug("Licker " + licker.Name + " enchanted " + item.Name);
             }
 
             return changed;

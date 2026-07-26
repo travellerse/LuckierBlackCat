@@ -133,6 +133,23 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void SuccessfulItemLicksUseDebugLogging()
+    {
+        using var assembly = LoadPlugin();
+        var utilityType = assembly.MainModule.GetType("LuckierBlackCat.Utils.BlackCatUtils");
+        var tryLick = utilityType.Methods.Single(method => method.Name == "TryLickItem");
+
+        Assert.Contains(tryLick.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "LuckierBlackCat.Utils.Logger"
+            && method.Name == "LogDebug");
+        Assert.DoesNotContain(tryLick.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "LuckierBlackCat.Utils.Logger"
+            && method.Name == "LogInfo");
+    }
+
+    [Fact]
     public void PackageAndReadmeRecordReleaseCompatibility()
     {
         var root = FindRepositoryRoot();
