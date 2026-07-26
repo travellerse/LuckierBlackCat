@@ -5,6 +5,7 @@ using LuckierBlackCat.Core;
 using LuckierBlackCat.Patching;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace LuckierBlackCat
 {
@@ -137,6 +138,26 @@ namespace LuckierBlackCat
             string configPath = Path.Combine(Paths.ConfigPath, "LuckierBlackCat.cfg");
             _configFile = new ConfigFile(configPath, true);
             Utils.Logger.LogInfo("Configuration file path: " + configPath);
+
+            try
+            {
+                FieldInfo configField = typeof(BaseUnityPlugin).GetField(
+                    "<Config>k__BackingField",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                if (configField == null)
+                {
+                    Utils.Logger.LogWarning(
+                        "BepInEx Config field was not found; Mod Config GUI integration is unavailable.");
+                    return;
+                }
+
+                configField.SetValue(this, _configFile);
+            }
+            catch (System.Exception ex)
+            {
+                Utils.Logger.LogWarning(
+                    "Could not expose the configuration to Mod Config GUI: " + ex.Message);
+            }
         }
 
         #endregion

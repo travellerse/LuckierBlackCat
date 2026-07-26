@@ -61,6 +61,9 @@
     <None Include="..\..\README.md" Link="README.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\README_EN.md" Link="README_EN.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\README_JP.md" Link="README_JP.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\LangConfig\*.xlsx"
+             Link="LangConfig\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="CopyToElinPackage"
@@ -74,9 +77,13 @@
       <ElinPackageFile Include="$(TargetDir)preview.jpg" />
       <ElinPackageFile Include="$(TargetDir)LICENSE.txt" />
       <ElinPackageFile Include="$(TargetDir)README*.md" />
+      <ElinLangConfigFile Include="$(TargetDir)LangConfig\*.xlsx" />
     </ItemGroup>
     <Copy SourceFiles="@(ElinPackageFile)"
           DestinationFolder="$(ElinPackageDir)"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ElinLangConfigFile)"
+          DestinationFolder="$(ElinPackageDir)\LangConfig"
           SkipUnchangedFiles="true" />
   </Target>
 </Project>

@@ -44,6 +44,8 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 
 Configuration file location: `Elin\BepInEx\config\LuckierBlackCat.cfg`
 
+With [Mod Config GUI](https://steamcommunity.com/sharedfiles/filedetails/?id=3379819704) installed, these settings can also be changed from the in-game Mod Viewer. The interface is localized in Chinese, English, and Japanese.
+
 ### Configurable Options
 
 ```ini

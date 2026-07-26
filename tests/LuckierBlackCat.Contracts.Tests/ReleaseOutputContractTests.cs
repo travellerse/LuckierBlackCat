@@ -37,6 +37,9 @@ public sealed class ReleaseOutputContractTests
     [InlineData("README.md")]
     [InlineData("README_EN.md")]
     [InlineData("README_JP.md")]
+    [InlineData("LangConfig/CN.xlsx")]
+    [InlineData("LangConfig/EN.xlsx")]
+    [InlineData("LangConfig/JP.xlsx")]
     public void ReleaseOutputContainsRequiredResource(string fileName)
     {
         var path = Path.Combine(FindRepositoryRoot(), "bin", "Release", fileName);

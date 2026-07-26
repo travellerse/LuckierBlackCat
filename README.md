@@ -44,6 +44,8 @@
 
 配置文件位置：`Elin\BepInEx\config\LuckierBlackCat.cfg`
 
+安装 [Mod Config GUI](https://steamcommunity.com/sharedfiles/filedetails/?id=3379819704) 后，也可以在游戏的模组查看器中修改这些配置；界面支持中文、英文和日文。
+
 ### 可配置选项
 
 ```ini

@@ -97,6 +97,25 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void PluginExposesExistingConfigFileThroughBasePluginConfig()
+    {
+        using var assembly = LoadPlugin();
+        var pluginType = assembly.MainModule.GetType("LuckierBlackCat.LuckierBlackCat");
+        var initialize = pluginType.Methods.Single(method => method.Name == "InitializeConfig");
+
+        Assert.Contains(initialize.Body.Instructions, instruction =>
+            instruction.Operand is string value
+            && value == "LuckierBlackCat.cfg");
+        Assert.Contains(initialize.Body.Instructions, instruction =>
+            instruction.Operand is string value
+            && value == "<Config>k__BackingField");
+        Assert.Contains(initialize.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "System.Reflection.FieldInfo"
+            && method.Name == "SetValue");
+    }
+
+    [Fact]
     public void PackageAndReadmeRecordReleaseCompatibility()
     {
         var root = FindRepositoryRoot();

@@ -71,6 +71,7 @@ jobs:
             bin/Release/LuckierBlackCat.Patching.dll
             bin/Release/package.xml
             bin/Release/preview.jpg
+            bin/Release/LangConfig/*.xlsx
             bin/Release/*.md
             bin/Release/LICENSE*
           if-no-files-found: error

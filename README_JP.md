@@ -44,6 +44,8 @@ Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め
 
 設定ファイルの場所：`Elin\BepInEx\config\LuckierBlackCat.cfg`
 
+[Mod Config GUI](https://steamcommunity.com/sharedfiles/filedetails/?id=3379819704)を導入すると、ゲーム内のModビューアーからこれらの設定を変更できます。中国語、英語、日本語の表示に対応しています。
+
 ### 設定可能オプション
 
 ```ini

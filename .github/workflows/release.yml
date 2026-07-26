@@ -116,6 +116,17 @@ jobs:
             Copy-Item $file $packageDirectory
           }
 
+          $langConfigDirectory = Join-Path $packageDirectory "LangConfig"
+          New-Item -ItemType Directory -Path $langConfigDirectory -Force |
+            Out-Null
+          foreach ($language in @("CN", "EN", "JP")) {
+            $file = "bin/Release/LangConfig/$language.xlsx"
+            if (-not (Test-Path $file -PathType Leaf)) {
+              throw "Required language config is missing: $file"
+            }
+            Copy-Item $file $langConfigDirectory
+          }
+
           $archive = "release/$packageName.zip"
           Compress-Archive -Path "$packageDirectory/*" -DestinationPath $archive
           "name=$packageName" >> $env:GITHUB_OUTPUT
