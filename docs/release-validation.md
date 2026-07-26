@@ -34,7 +34,8 @@ test, and the configuration was restored after the matrix.
 - [ ] Attempt an eligible pickup with a full backpack; verify no lick.
 - [ ] Trigger a pickup transformation; verify the returned item controls eligibility.
 - [ ] Have an NPC pick up eligible equipment; verify no lick.
-- [ ] Perform active prayer; verify all eligible player items are processed once.
+- [ ] Perform active prayer; verify eligible items in the main inventory and multiple
+  accessible nested backpacks are each processed once.
 - [ ] Trigger passive prayer; verify the same behavior.
 - [ ] Set `RequireLickAbility = false`; verify licking works without a character
   with the Ehekatl's Blessing trait.

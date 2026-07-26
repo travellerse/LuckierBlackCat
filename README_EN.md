@@ -16,7 +16,7 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 
 - **Unlimited Distance Item Licking** - Removes distance restrictions for black cat item licking, can be triggered from anywhere on the map
 - **Auto-lick Picked Items** - Automatically triggers black cat item licking when the player picks up equipment
-- **Batch Licking During Prayer** - Automatically licks all eligible equipment in the player's inventory during prayer
+- **Batch Licking During Prayer** - Automatically licks eligible equipment in all accessible player containers, including nested backpacks
 - **Enhanced Licking Effects** - Strengthens the black cat's licking effects based on the quantity of [Black Cat's Saliva]
 
 ### Usage Requirements

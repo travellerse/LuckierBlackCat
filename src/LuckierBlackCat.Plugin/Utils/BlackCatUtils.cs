@@ -52,7 +52,7 @@ namespace LuckierBlackCat.Utils
         public static int LickAllEligibleItems(Chara character, bool showMessage = true)
         {
             int lickCount = 0;
-            foreach (Thing item in character.things)
+            foreach (Thing item in character.things.List(_ => true, true))
             {
                 if (TryLickItem(item, showMessage))
                 {

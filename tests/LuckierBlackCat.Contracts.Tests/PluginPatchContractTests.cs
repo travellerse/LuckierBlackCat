@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 using Xunit;
 
 namespace LuckierBlackCat.Contracts.Tests;
@@ -113,6 +114,22 @@ public sealed class PluginPatchContractTests
             instruction.Operand is MethodReference method
             && method.DeclaringType.FullName == "System.Reflection.FieldInfo"
             && method.Name == "SetValue");
+    }
+
+    [Fact]
+    public void PrayerLickingEnumeratesAccessibleNestedInventory()
+    {
+        using var assembly = LoadPlugin();
+        var utilityType = assembly.MainModule.GetType("LuckierBlackCat.Utils.BlackCatUtils");
+        var lickAll = utilityType.Methods.Single(method => method.Name == "LickAllEligibleItems");
+        var instructions = lickAll.Body.Instructions;
+        var listCallIndex = instructions.IndexOf(instructions.Single(instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "ThingContainer"
+            && method.Name == "List"
+            && method.Parameters.Count == 2));
+
+        Assert.Equal(OpCodes.Ldc_I4_1, instructions[listCallIndex - 1].OpCode);
     }
 
     [Fact]
