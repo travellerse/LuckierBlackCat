@@ -67,7 +67,8 @@ jobs:
           $version = $env:RELEASE_VERSION
           $package = Get-Content package.xml -Raw
           $expectedVersion = [regex]::Escape($version)
-          $versionPattern = "<version>0\.23\.325-$expectedVersion</version>"
+          $compatibility = [regex]::Escape("+elin.0.23.325.patch.2")
+          $versionPattern = "<version>$expectedVersion$compatibility</version>"
           if ($package -notmatch $versionPattern) {
             throw "package.xml is incompatible with mod $version."
           }

@@ -6,6 +6,8 @@
 
 > **语言版本**: [中文](README.md) | [English](README_EN.md) | [日本語](README_JP.md)
 
+兼容 Elin 0.23.325 Patch 2（Steam build 24059635）。
+
 一个为Elin游戏开发的BepInEx模组，大幅增强黑猫的舔物品功能，让你的装备变得更加幸运！
 
 ## 功能介绍

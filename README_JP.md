@@ -6,6 +6,8 @@
 
 > **言語バージョン**: [中文](README.md) | [English](README_EN.md) | [日本語](README_JP.md)
 
+Elin 0.23.325 Patch 2（Steam build 24059635）に対応しています。
+
 Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め機能を大幅に強化し、装備をより幸運にします！
 
 ## 機能紹介

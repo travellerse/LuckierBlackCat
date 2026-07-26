@@ -6,6 +6,8 @@
 
 > **Language Versions**: [中文](README.md) | [English](README_EN.md) | [日本語](README_JP.md)
 
+Compatible with Elin 0.23.325 Patch 2 (Steam build 24059635).
+
 A BepInEx mod developed for the Elin game that significantly enhances the black cat's item licking functionality, making your equipment even luckier!
 
 ## Features

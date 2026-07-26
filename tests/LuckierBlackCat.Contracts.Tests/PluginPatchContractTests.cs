@@ -85,12 +85,18 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
-    public void PackageVersionRecordsGameAndModCompatibility()
+    public void PackageAndReadmeRecordReleaseCompatibility()
     {
         var root = FindRepositoryRoot();
         var package = File.ReadAllText(Path.Combine(root, "package.xml"));
+        var readme = File.ReadAllText(Path.Combine(root, "README_EN.md"));
 
-        Assert.Contains("<version>0.23.325-2.0.0</version>", package);
+        Assert.Contains(
+            "<version>2.0.0+elin.0.23.325.patch.2</version>",
+            package);
+        Assert.Contains(
+            "Compatible with Elin 0.23.325 Patch 2 (Steam build 24059635)",
+            readme);
     }
 
     private static AssemblyDefinition LoadPlugin()
