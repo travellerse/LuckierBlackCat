@@ -41,11 +41,6 @@ namespace LuckierBlackCat.Core
         /// </summary>
         public static ConfigEntry<bool> RequireLickAbility { get; private set; }
 
-        /// <summary>
-        /// 配置项：使用原版附魔系统（默认false，使用自定义附魔系统）
-        /// </summary>
-        public static ConfigEntry<bool> UseVanillaEnchantment { get; private set; }
-
         #endregion
 
         #region 初始化方法
@@ -77,9 +72,6 @@ namespace LuckierBlackCat.Core
 
             RequireLickAbility = configFile.Bind("Settings", "RequireLickAbility", true,
                 "Whether the mod requires lick ability to work. If set to false, the mod will work even without black cats with lick ability.");
-
-            UseVanillaEnchantment = configFile.Bind("Settings", "UseVanillaEnchantment", false,
-                "Use vanilla enchantment system instead of custom enhanced system. Set to true to revert to original behavior. (Default: false - use custom system)");
 
             logger.LogInfo("Configuration initialized successfully.");
         }

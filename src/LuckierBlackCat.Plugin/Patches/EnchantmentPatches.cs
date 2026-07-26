@@ -1,10 +1,8 @@
 using HarmonyLib;
 using LuckierBlackCat.Core;
-using LuckierBlackCat.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
-using UnityEngine;
 
 namespace LuckierBlackCat.Patches
 {
@@ -52,98 +50,6 @@ namespace LuckierBlackCat.Patches
                 // 相加：基础等级 + (黑猫唾液数量 * 增强倍数)
                 new CodeInstruction(OpCodes.Add),
             }).InstructionEnumeration();
-        }
-    }
-
-    /// <summary>
-    /// Thing.GetEnchant 方法的补丁类
-    /// 在获取附魔时对附魔列表进行随机洗牌，增加随机性和多样性
-    /// </summary>
-    [HarmonyPatch(typeof(Thing), "GetEnchant",
-        new Type[] { typeof(int), typeof(Func<SourceElement.Row, bool>), typeof(bool) })]
-    public static class ThingGetEnchantPatch
-    {
-        /// <summary>
-        /// 使用 Transpiler 修改原方法的 IL 代码
-        /// 在遍历附魔列表前对其进行洗牌操作
-        /// </summary>
-        /// <param name="instructions">原方法的 IL 指令序列</param>
-        /// <returns>修改后的 IL 指令序列</returns>
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            return new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
-            {
-                // 匹配加载本地变量和获取枚举器的指令
-                new CodeMatch(new OpCode?(OpCodes.Ldloc_0), null, null),
-                new CodeMatch(new OpCode?(OpCodes.Callvirt),
-                    AccessTools.Method(typeof(List<SourceElement.Row>), "GetEnumerator"), null),
-            }).Advance(1).InsertAndAdvance(new CodeInstruction[]
-            {
-                // 插入洗牌方法调用
-                new CodeInstruction(OpCodes.Call,
-                    AccessTools.Method(typeof(CollectionUtils), "Shuffle",
-                        new Type[] { typeof(System.Collections.Generic.IList<SourceElement.Row>) })),
-            }).InstructionEnumeration();
-        }
-    }
-
-    /// <summary>
-    /// Thing.AddEnchant 方法的补丁类
-    /// 用于记录附魔添加过程的调试信息
-    /// </summary>
-    [HarmonyPatch(typeof(Thing), "AddEnchant", new Type[] { typeof(int) })]
-    public static class ThingAddEnchantPatch
-    {
-        /// <summary>
-        /// 在 AddEnchant 方法执行后调用，记录附魔信息
-        /// </summary>
-        /// <param name="__instance">调用方法的 Thing 实例</param>
-        /// <param name="__result">返回的 Element 结果</param>
-        /// <param name="lv">附魔等级参数</param>
-        private static void Postfix(Thing __instance, ref Element __result, int lv)
-        {
-            // 记录附魔添加的详细信息，包括物品名称、等级和稀有度
-            Utils.Logger.LogInfo("Thing::AddEnchant - Name: " + __instance.Name + ", LV: " + lv + ", Rarity: " + __instance.rarity);
-
-            // 以下是被注释的调试代码，用于分析所有可用的附魔元素
-            /*
-            Func<SourceElement.Row, bool> func = (SourceElement.Row r) => r.IsEncAppliable(__instance.category);
-            foreach (SourceElement.Row row in EClass.sources.elements.rows)
-            {
-                if ((!row.tag.Contains("flag")) && func(row))
-                    Logger.LogInfo("Element " + row.name + " - Chance: " + row.chance + ", LV: " + row.LV + ", MTP: " + row.mtp);
-            }
-            */
-        }
-    }
-
-    /// <summary>
-    /// 自定义附魔系统
-    /// </summary>
-    [HarmonyPatch(typeof(Thing), "TryLickEnchant",
-        new Type[] { typeof(Chara), typeof(bool), typeof(Chara), typeof(BodySlot) })]
-    public static class CustomBlackCatEnchantmentPatch
-    {
-        /// <summary>
-        /// 在舔舐附魔后执行自定义增强逻辑
-        /// </summary>
-        /// <param name="__instance">被舔舐的物品</param>
-        /// <param name="c">执行舔舐的角色</param>
-        /// <param name="msg">是否显示消息</param>
-        /// <param name="tg">目标角色</param>
-        /// <param name="slot">装备槽位</param>
-        private static bool Prefix(Thing __instance, Chara c, bool msg, Chara tg, BodySlot slot)
-        {
-            // 只对装备进行处理
-            if (!__instance.IsEquipment)
-                return false;
-
-            // 获取玩家拥有的黑猫唾液数量
-            int blackCatSalivaCount = EClass.player.CountKeyItem("well_enhance");
-
-            // ApplyEnchantment(__instance, blackCatSalivaCount);
-
-            return false;
         }
     }
 }

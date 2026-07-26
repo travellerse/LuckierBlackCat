@@ -85,8 +85,6 @@ namespace LuckierBlackCat.Core
         private static void ApplyEnchantmentPatches(Harmony harmony, ManualLogSource logger)
         {
             harmony.PatchAll(typeof(ThingTryLickEnchantPatch));
-            harmony.PatchAll(typeof(ThingGetEnchantPatch));
-            harmony.PatchAll(typeof(ThingAddEnchantPatch));
             logger.LogInfo("Enhanced enchantment patches applied.");
         }
     }
