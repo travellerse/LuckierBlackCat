@@ -12,7 +12,8 @@ public sealed class InstructionTransformsTests
     private static readonly MethodInfo DistanceMethod = RequireMethod(nameof(Fixtures.Distance));
     private static readonly MethodInfo LevelGetter = RequireMethod(nameof(Fixtures.GetLevel));
     private static readonly MethodInfo AddEnchantMethod = RequireMethod(nameof(Fixtures.AddEnchant));
-    private static readonly MethodInfo AdjustLevelMethod = RequireMethod(nameof(Fixtures.AdjustLevel));
+    private static readonly MethodInfo ApplyEnchantmentsMethod =
+        RequireMethod(nameof(Fixtures.ApplyEnchantments));
 
     [Fact]
     public void DistanceTransformRejectsMissingAnchor()
@@ -63,38 +64,39 @@ public sealed class InstructionTransformsTests
     }
 
     [Fact]
-    public void LevelTransformRejectsMissingAnchor()
+    public void EnchantCallTransformRejectsMissingAnchor()
     {
-        var error = Assert.Throws<PatchAnchorException>(() => TransformLevel(new List<CodeInstruction>()));
+        var error = Assert.Throws<PatchAnchorException>(() =>
+            TransformEnchantCall(new List<CodeInstruction>()));
 
         Assert.Equal("Thing.TryLickEnchant", error.TargetName);
         Assert.Equal(0, error.ActualMatches);
     }
 
     [Fact]
-    public void LevelTransformInsertsAdjustmentBeforeAddEnchant()
+    public void EnchantCallTransformReplacesOnlyAddEnchantCall()
     {
-        var result = TransformLevel(LevelAnchor());
+        var result = TransformEnchantCall(LevelAnchor());
 
-        Assert.Equal(3, result.Count);
+        Assert.Equal(2, result.Count);
         Assert.Equal(LevelGetter, result[0].operand);
-        Assert.Equal(AdjustLevelMethod, result[1].operand);
-        Assert.Equal(AddEnchantMethod, result[2].operand);
+        Assert.Equal(OpCodes.Call, result[1].opcode);
+        Assert.Equal(ApplyEnchantmentsMethod, result[1].operand);
     }
 
     [Fact]
-    public void LevelTransformRejectsAmbiguousAnchor()
+    public void EnchantCallTransformRejectsAmbiguousAnchor()
     {
         var instructions = LevelAnchor();
         instructions.AddRange(LevelAnchor());
 
-        var error = Assert.Throws<PatchAnchorException>(() => TransformLevel(instructions));
+        var error = Assert.Throws<PatchAnchorException>(() => TransformEnchantCall(instructions));
 
         Assert.Equal(2, error.ActualMatches);
     }
 
     [Fact]
-    public void LevelTransformPreservesExistingMetadata()
+    public void EnchantCallTransformPreservesExistingMetadata()
     {
         var instructions = LevelAnchor();
         var generator = new DynamicMethod("metadata", typeof(void), Type.EmptyTypes).GetILGenerator();
@@ -103,12 +105,10 @@ public sealed class InstructionTransformsTests
         instructions[1].labels.Add(label);
         instructions[1].blocks.Add(block);
 
-        var result = TransformLevel(instructions);
+        var result = TransformEnchantCall(instructions);
 
-        Assert.Empty(result[1].labels);
-        Assert.Empty(result[1].blocks);
-        Assert.Contains(label, result[2].labels);
-        Assert.Contains(block, result[2].blocks);
+        Assert.Contains(label, result[1].labels);
+        Assert.Contains(block, result[1].blocks);
     }
 
     private static IReadOnlyList<CodeInstruction> TransformDistance(
@@ -122,14 +122,14 @@ public sealed class InstructionTransformsTests
             "ThingGen.TryLickChest");
     }
 
-    private static IReadOnlyList<CodeInstruction> TransformLevel(
+    private static IReadOnlyList<CodeInstruction> TransformEnchantCall(
         IEnumerable<CodeInstruction> instructions)
     {
-        return InstructionTransforms.InsertLevelAdjustment(
+        return InstructionTransforms.ReplaceEnchantCall(
             instructions,
             LevelGetter,
             AddEnchantMethod,
-            AdjustLevelMethod,
+            ApplyEnchantmentsMethod,
             "Thing.TryLickEnchant");
     }
 
@@ -166,6 +166,6 @@ public sealed class InstructionTransformsTests
 
         public static object AddEnchant(int level) => level;
 
-        public static int AdjustLevel(int level) => level + 1;
+        public static object ApplyEnchantments(object item, int level) => item ?? level;
     }
 }

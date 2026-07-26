@@ -11,6 +11,7 @@ This checklist is a release gate. Do not publish version 2.0.0 until every item 
 - [x] Reference DLL hash, method contracts, and IL anchors pass.
 - [x] Transpiler 0/1/2 match cases pass.
 - [x] Transpiler metadata preservation cases pass.
+- [x] Multiple-roll count bounds and last-successful-result semantics pass.
 - [x] Package contains the three plugin-owned DLLs and nine release resources.
 - [x] CI and Release workflow YAML passes `yamllint`.
 - [x] `git diff --check` passes.
@@ -40,8 +41,11 @@ test, and the configuration was restored after the matrix.
 - [ ] Set `RequireLickAbility = false`; verify licking works without a character
   with the Ehekatl's Blessing trait.
 - [ ] Change `EnchantTimes` between launches; verify the runtime value changes enhancement.
+- [ ] Set `EnchantCount = 1`; verify a successful lick performs one enchantment roll.
+- [ ] Set `EnchantCount = 3`; verify a successful lick performs three enchantment rolls,
+  duplicate results stack, and the item remains ineligible for another lick.
 - [ ] Install Mod Config GUI 0.1.19; open Luckier Black Cat in Mod Viewer and verify
-  all six settings appear without an entry-point error.
+  all seven settings appear without an entry-point error.
 - [ ] Switch Elin between CN, EN, and JP; verify the Mod Config GUI labels and tooltips
   use the matching `LangConfig` workbook.
 - [ ] Change a setting in Mod Config GUI, save, and restart; verify

@@ -28,12 +28,24 @@ namespace LuckierBlackCat.Patches
         private static IEnumerable<CodeInstruction> Transform(
             IEnumerable<CodeInstruction> instructions)
         {
-            return InstructionTransforms.InsertLevelAdjustment(
+            return InstructionTransforms.ReplaceEnchantCall(
                 instructions,
                 AccessTools.PropertyGetter(typeof(Card), "LV"),
                 AccessTools.Method(typeof(Thing), "AddEnchant", new Type[] { typeof(int) }),
-                AccessTools.Method(typeof(ThingTryLickEnchantPatch), nameof(AdjustLevel)),
+                AccessTools.Method(
+                    typeof(ThingTryLickEnchantPatch),
+                    nameof(ApplyEnchantments),
+                    new Type[] { typeof(Thing), typeof(int) }),
                 "Thing.TryLickEnchant");
+        }
+
+        public static Element ApplyEnchantments(Thing item, int baseLevel)
+        {
+            int level = AdjustLevel(baseLevel);
+            return LickRules.RollEnchantments(
+                ConfigManager.EnchantCount.Value,
+                level,
+                item.AddEnchant);
         }
 
         public static int AdjustLevel(int baseLevel)

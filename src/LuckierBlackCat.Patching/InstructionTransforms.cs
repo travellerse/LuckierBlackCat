@@ -37,11 +37,11 @@ public static class InstructionTransforms
         return codes;
     }
 
-    public static IReadOnlyList<CodeInstruction> InsertLevelAdjustment(
+    public static IReadOnlyList<CodeInstruction> ReplaceEnchantCall(
         IEnumerable<CodeInstruction> instructions,
         MethodInfo levelGetter,
         MethodInfo addEnchantMethod,
-        MethodInfo adjustLevelMethod,
+        MethodInfo applyEnchantmentsMethod,
         string targetName)
     {
         var codes = Copy(instructions);
@@ -57,7 +57,9 @@ public static class InstructionTransforms
         }
 
         RequireUniqueMatch(targetName, matches.Count);
-        codes.Insert(matches[0] + 1, new CodeInstruction(OpCodes.Call, adjustLevelMethod));
+        var enchantCall = codes[matches[0] + 1];
+        enchantCall.opcode = OpCodes.Call;
+        enchantCall.operand = applyEnchantmentsMethod;
         return codes;
     }
 

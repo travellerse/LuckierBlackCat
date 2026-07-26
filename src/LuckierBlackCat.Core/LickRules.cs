@@ -5,6 +5,9 @@ namespace LuckierBlackCat.Core;
 
 public static class LickRules
 {
+    public const int MinEnchantCount = 1;
+    public const int MaxEnchantCount = 10;
+
     public static bool IsEligible(ItemFacts item)
     {
         if (item is null)
@@ -98,5 +101,40 @@ public static class LickRules
         }
 
         return (int)level;
+    }
+
+    public static int NormalizeEnchantCount(int count)
+    {
+        if (count < MinEnchantCount)
+        {
+            return MinEnchantCount;
+        }
+
+        return count > MaxEnchantCount ? MaxEnchantCount : count;
+    }
+
+    public static T? RollEnchantments<T>(
+        int count,
+        int level,
+        Func<int, T?> addEnchant)
+        where T : class
+    {
+        if (addEnchant is null)
+        {
+            throw new ArgumentNullException(nameof(addEnchant));
+        }
+
+        T? lastEnchant = null;
+        int normalizedCount = NormalizeEnchantCount(count);
+        for (int index = 0; index < normalizedCount; index++)
+        {
+            T? enchant = addEnchant(level);
+            if (enchant is not null)
+            {
+                lastEnchant = enchant;
+            }
+        }
+
+        return lastEnchant;
     }
 }

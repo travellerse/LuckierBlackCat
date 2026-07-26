@@ -157,6 +157,67 @@ public sealed class LickRulesTests
         Assert.Equal(int.MinValue, LickRules.ComputeEnchantLevel(int.MinValue, 0, 0));
     }
 
+    [Theory]
+    [InlineData(int.MinValue, 1)]
+    [InlineData(0, 1)]
+    [InlineData(1, 1)]
+    [InlineData(5, 5)]
+    [InlineData(10, 10)]
+    [InlineData(11, 10)]
+    [InlineData(int.MaxValue, 10)]
+    public void EnchantCountStaysWithinSupportedRange(int count, int expected)
+    {
+        Assert.Equal(expected, LickRules.NormalizeEnchantCount(count));
+    }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(1, 1)]
+    [InlineData(4, 4)]
+    [InlineData(11, 10)]
+    public void EnchantmentRollsUseNormalizedCount(int configuredCount, int expectedRolls)
+    {
+        var rolls = 0;
+
+        LickRules.RollEnchantments<object>(configuredCount, 42, level =>
+        {
+            Assert.Equal(42, level);
+            rolls++;
+            return new object();
+        });
+
+        Assert.Equal(expectedRolls, rolls);
+    }
+
+    [Fact]
+    public void EnchantmentRollsReturnLastSuccessfulResult()
+    {
+        var rolls = 0;
+        var firstEnchant = new object();
+        var lastEnchant = new object();
+
+        var result = LickRules.RollEnchantments(3, 42, level =>
+        {
+            Assert.Equal(42, level);
+            rolls++;
+            if (rolls == 1)
+            {
+                return firstEnchant;
+            }
+
+            return rolls == 2 ? null : lastEnchant;
+        });
+
+        Assert.Same(lastEnchant, result);
+    }
+
+    [Fact]
+    public void EnchantmentRollsRejectNullOperation()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            LickRules.RollEnchantments<object>(1, 42, null!));
+    }
+
     private static ItemFacts Item(
         bool equipment = true,
         bool cursed = false,

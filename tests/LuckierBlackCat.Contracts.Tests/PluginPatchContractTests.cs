@@ -98,6 +98,42 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void EnchantmentRollCountHasIndependentConfiguration()
+    {
+        using var assembly = LoadPlugin();
+        var configType = assembly.MainModule.GetType("LuckierBlackCat.Core.ConfigManager");
+        var initialize = configType.Methods.Single(method => method.Name == "Initialize");
+
+        Assert.Contains(configType.Properties, property => property.Name == "EnchantCount");
+        Assert.Contains(initialize.Body.Instructions, instruction =>
+            instruction.Operand is string value
+            && value == "EnchantCount");
+    }
+
+    [Fact]
+    public void EnchantmentPatchRoutesRollsThroughScopedHelper()
+    {
+        using var assembly = LoadPlugin();
+        var patchType = assembly.MainModule.GetType(
+            "LuckierBlackCat.Patches.ThingTryLickEnchantPatch");
+        var transform = patchType.Methods.Single(method => method.Name == "Transform");
+        var helper = patchType.Methods.Single(method => method.Name == "ApplyEnchantments");
+
+        Assert.Contains(transform.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "LuckierBlackCat.Patching.InstructionTransforms"
+            && method.Name == "ReplaceEnchantCall");
+        Assert.Contains(helper.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "Thing"
+            && method.Name == "AddEnchant");
+        Assert.Contains(helper.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "LuckierBlackCat.Core.LickRules"
+            && method.Name == "RollEnchantments");
+    }
+
+    [Fact]
     public void PluginExposesExistingConfigFileThroughBasePluginConfig()
     {
         using var assembly = LoadPlugin();

@@ -37,6 +37,11 @@ namespace LuckierBlackCat.Core
         public static ConfigEntry<int> EnchantTimes { get; private set; }
 
         /// <summary>
+        /// 配置项：每次舔舐执行的附魔抽取次数
+        /// </summary>
+        public static ConfigEntry<int> EnchantCount { get; private set; }
+
+        /// <summary>
         /// 配置项：是否需要“艾赫卡托尔的祝福”特质才能发挥作用
         /// </summary>
         public static ConfigEntry<bool> RequireLickAbility { get; private set; }
@@ -68,7 +73,17 @@ namespace LuckierBlackCat.Core
                 "Enhanced the black cat's licking effect based on the amount of [Black Cat's Saliva].");
 
             EnchantTimes = configFile.Bind("Settings", "EnchantTimes", 1,
-                "The times of enhance");
+                "Enchantment level added per Black Cat's Saliva.");
+
+            EnchantCount = configFile.Bind(
+                "Settings",
+                "EnchantCount",
+                1,
+                new ConfigDescription(
+                    "Number of enchantment rolls performed by each successful lick.",
+                    new AcceptableValueRange<int>(
+                        LickRules.MinEnchantCount,
+                        LickRules.MaxEnchantCount)));
 
             RequireLickAbility = configFile.Bind("Settings", "RequireLickAbility", true,
                 "Whether the mod requires the Ehekatl's Blessing trait to work. "
