@@ -53,8 +53,12 @@ public static class LickRules
             && IsEligible(item);
     }
 
-    public static bool ShouldProcessPrayer(bool characterIsPlayer, bool prayerSucceeded)
+    public static bool ShouldProcessPrayer(
+        bool characterIsPlayer,
+        bool prayerSucceeded,
+        bool passive)
     {
+        _ = passive;
         return characterIsPlayer && prayerSucceeded;
     }
 

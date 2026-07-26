@@ -41,9 +41,9 @@ namespace LuckierBlackCat.Patches
     [HarmonyPatch(typeof(ActPray), "TryPray", new Type[] { typeof(Chara), typeof(bool) })]
     public static class ActPrayTryPrayPatch
     {
-        private static void Postfix(Chara c, bool __result)
+        private static void Postfix(Chara c, bool passive, bool __result)
         {
-            if (!LickRules.ShouldProcessPrayer(c.IsPC, __result))
+            if (!LickRules.ShouldProcessPrayer(c.IsPC, __result, passive))
             {
                 return;
             }

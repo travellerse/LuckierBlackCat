@@ -72,16 +72,48 @@ public sealed class LickRulesTests
     }
 
     [Theory]
-    [InlineData(true, true, true)]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, false)]
+    [InlineData(true, true, false, true)]
+    [InlineData(true, true, true, true)]
+    [InlineData(true, false, false, false)]
+    [InlineData(false, true, false, false)]
+    [InlineData(false, false, true, false)]
     public void PrayerRequiresPlayerAndSuccessfulOriginalCall(
         bool isPlayer,
         bool succeeded,
+        bool passive,
         bool expected)
     {
-        Assert.Equal(expected, LickRules.ShouldProcessPrayer(isPlayer, succeeded));
+        Assert.Equal(expected, LickRules.ShouldProcessPrayer(isPlayer, succeeded, passive));
+    }
+
+    [Fact]
+    public void FullBackpackDoesNotTriggerPickupLick()
+    {
+        Assert.False(LickRules.ShouldLickAfterPickup(true, false, false, Item()));
+    }
+
+    [Fact]
+    public void ExistingInventoryItemDoesNotTriggerPickupLick()
+    {
+        Assert.False(LickRules.ShouldLickAfterPickup(true, true, true, Item()));
+    }
+
+    [Fact]
+    public void StackResultTriggersPickupLickWhenOwnershipChanges()
+    {
+        Assert.True(LickRules.ShouldLickAfterPickup(true, false, true, Item()));
+    }
+
+    [Fact]
+    public void ConvertedResultUsesResultEligibility()
+    {
+        Assert.False(LickRules.ShouldLickAfterPickup(true, false, true, Item(equipment: false)));
+    }
+
+    [Fact]
+    public void NpcPickupDoesNotTriggerPickupLick()
+    {
+        Assert.False(LickRules.ShouldLickAfterPickup(false, false, true, Item()));
     }
 
     [Fact]
