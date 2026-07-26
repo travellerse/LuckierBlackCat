@@ -85,6 +85,18 @@ public sealed class PluginPatchContractTests
     }
 
     [Fact]
+    public void AbilityRequirementUsesEhekatlsBlessingTerminology()
+    {
+        using var assembly = LoadPlugin();
+        var configType = assembly.MainModule.GetType("LuckierBlackCat.Core.ConfigManager");
+        var initialize = configType.Methods.Single(method => method.Name == "Initialize");
+
+        Assert.Contains(initialize.Body.Instructions, instruction =>
+            instruction.Operand is string value
+            && value.Contains("Ehekatl's Blessing trait", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void PackageAndReadmeRecordReleaseCompatibility()
     {
         var root = FindRepositoryRoot();

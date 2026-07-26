@@ -5,7 +5,7 @@ namespace LuckierBlackCat.Utils
 {
     public static class BlackCatUtils
     {
-        private const int LickAbilityElementId = 1412;
+        private const int EhekatlBlessingElementId = 1412;
         private const int EnchantStatusPropertyId = 107;
 
         public static ItemFacts ToItemFacts(Thing item)
@@ -70,13 +70,13 @@ namespace LuckierBlackCat.Utils
                 return EClass.pc;
             }
 
-            var abilities = new List<bool>(EClass._map.charas.Count);
+            var blessings = new List<bool>(EClass._map.charas.Count);
             foreach (Chara character in EClass._map.charas)
             {
-                abilities.Add(character.HasElement(LickAbilityElementId, 1));
+                blessings.Add(character.HasElement(EhekatlBlessingElementId, 1));
             }
 
-            int selectedIndex = LickRules.SelectLicker(true, abilities);
+            int selectedIndex = LickRules.SelectLicker(true, blessings);
             return selectedIndex >= 0 ? EClass._map.charas[selectedIndex] : null;
         }
 

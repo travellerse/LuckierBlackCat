@@ -36,7 +36,8 @@ test, and the configuration was restored after the matrix.
 - [ ] Have an NPC pick up eligible equipment; verify no lick.
 - [ ] Perform active prayer; verify all eligible player items are processed once.
 - [ ] Trigger passive prayer; verify the same behavior.
-- [ ] Set `RequireLickAbility = false`; verify player-backed licking works without a licker.
+- [ ] Set `RequireLickAbility = false`; verify licking works without a character
+  with the Ehekatl's Blessing trait.
 - [ ] Change `EnchantTimes` between launches; verify the runtime value changes enhancement.
 - [ ] Test with another enchantment mod; verify unrelated enchantment generation is unchanged.
 - [ ] Quit or disable the mod; verify Harmony patches owned by the plugin are removed.

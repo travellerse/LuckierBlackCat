@@ -21,8 +21,8 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 
 ### Usage Requirements
 
-- **By default, the current map must contain a character with the Lucky Cat ability**
-- **Can be disabled by setting `RequireLickAbility = false` in configuration**
+- **By default, the current map must contain a character with the Ehekatl's Blessing trait**
+- **Set `RequireLickAbility = false` to disable that trait requirement**
 - Only works on items that the game classifies as equipment
 - Does not work on cursed items
 - Only works on items with rarity higher than common
@@ -74,10 +74,10 @@ EnableLickEnchant = true
 # Default: 1
 EnchantTimes = 1
 
-## Whether lick ability is required for mod functionality
+## Whether the Ehekatl's Blessing trait is required for mod functionality
 # Type: Boolean
 # Default: true
-# Description: If set to false, the mod will work even without black cats with lick ability
+# Description: If false, the mod works without a character with that trait
 RequireLickAbility = true
 ```
 

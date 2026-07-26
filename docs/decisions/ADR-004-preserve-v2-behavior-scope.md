@@ -16,8 +16,9 @@ The reliability refactor must not silently redesign gameplay. Several original d
 
 Version 2 preserves these reviewed semantics:
 
-- Lickers are selected from characters on the current map, not only party members.
-- Disabling the ability requirement uses the player as the licker.
+- Lickers are selected from characters with the Ehekatl's Blessing trait on the
+  current map, not only party members.
+- Disabling the Ehekatl's Blessing trait requirement uses the player as the licker.
 - Eligibility follows Elin `TryLickEnchant`: equipment, not cursed, above normal rarity, and no existing lick state.
 - Pickup licking occurs only after an item becomes player-owned.
 - Existing inventory items, failed full-backpack pickups, and NPC pickups do not trigger.

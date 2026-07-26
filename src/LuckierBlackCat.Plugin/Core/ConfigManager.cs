@@ -37,7 +37,7 @@ namespace LuckierBlackCat.Core
         public static ConfigEntry<int> EnchantTimes { get; private set; }
 
         /// <summary>
-        /// 配置项：是否需要舔舐能力才能发挥作用
+        /// 配置项：是否需要“艾赫卡托尔的祝福”特质才能发挥作用
         /// </summary>
         public static ConfigEntry<bool> RequireLickAbility { get; private set; }
 
@@ -71,7 +71,8 @@ namespace LuckierBlackCat.Core
                 "The times of enhance");
 
             RequireLickAbility = configFile.Bind("Settings", "RequireLickAbility", true,
-                "Whether the mod requires lick ability to work. If set to false, the mod will work even without black cats with lick ability.");
+                "Whether the mod requires the Ehekatl's Blessing trait to work. "
+                + "If set to false, the mod will work without a character with that trait.");
 
             logger.LogInfo("Configuration initialized successfully.");
         }
