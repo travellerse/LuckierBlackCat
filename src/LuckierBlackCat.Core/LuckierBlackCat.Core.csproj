@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>LuckierBlackCat.Core</RootNamespace>
+    <AssemblyName>LuckierBlackCat.Core</AssemblyName>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

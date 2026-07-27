@@ -1,10 +1,12 @@
 # LuckierBlackCat - より幸運な黒猫
 
-[![バージョン](https://img.shields.io/badge/バージョン-0.4.1.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
+[![バージョン](https://img.shields.io/badge/バージョン-2.0.0-blue.svg)](https://github.com/travellerse/LuckierBlackCat/releases)
 [![ライセンス](https://img.shields.io/badge/ライセンス-MIT-green.svg)](LICENSE.txt)
 [![ゲーム](https://img.shields.io/badge/ゲーム-Elin-orange.svg)](https://store.steampowered.com/app/2135150/Elin/)
 
 > **言語バージョン**: [中文](README.md) | [English](README_EN.md) | [日本語](README_JP.md)
+
+Elin 0.23.325 Patch 2（Steam build 24059635）に対応しています。
 
 Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め機能を大幅に強化し、装備をより幸運にします！
 
@@ -14,14 +16,16 @@ Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め
 
 - **距離制限なしアイテム舐め** - 黒猫のアイテム舐めの距離制限を撤廃し、マップのどこからでも発動可能
 - **拾得時自動舐め** - プレイヤーが装備を拾った際に自動で黒猫のアイテム舐めを発動
-- **祈祷時一括舐め** - 祈祷時にプレイヤーのインベントリ内の条件を満たすすべての装備を自動で舐める
+- **祈祷時一括舐め** - 祈祷時に、入れ子のバックパックを含むアクセス可能なすべての所持コンテナ内の対象装備を自動で舐める
 - **舐め効果強化** - 【黒猫のよだれ】の数量に基づいて黒猫の舐め効果を強化
+- **1回の舐めで複数エンチャント** - 舐めに成功するたびに1～10回のエンチャント抽選を実行可能
+- **舐め結果ログ** - 各アイテムの抽選回数、成功回数、異なるエンチャント数をゲームログに表示
 
 ### 使用条件
 
-- **デフォルトではパーティメンバーが【エヘカトルの祝福】を持っている必要があります**
-- **設定で`RequireLickAbility = false`にすることで舐め能力要求を無効化できます**
-- 装備と遠距離武器にのみ有効
+- **デフォルトでは現在のマップに「エヘカトルの祝福」特性を持つキャラクターが必要です**
+- **`RequireLickAbility = false` に設定すると、この特性要件を無効化できます**
+- ゲームが装備品として判定するアイテムにのみ有効
 - 呪われたアイテムには無効
 - レア度が一般より高いアイテムにのみ有効
 - すでに舐められたアイテムには重複して効果なし
@@ -41,6 +45,8 @@ Elinゲーム用に開発されたBepInExモッド。黒猫のアイテム舐め
 ## 設定説明
 
 設定ファイルの場所：`Elin\BepInEx\config\LuckierBlackCat.cfg`
+
+[Mod Config GUI](https://steamcommunity.com/sharedfiles/filedetails/?id=3379819704)を導入すると、ゲーム内のModビューアーからこれらの設定を変更できます。中国語、英語、日本語の表示に対応しています。
 
 ### 設定可能オプション
 
@@ -72,12 +78,21 @@ EnableLickEnchant = true
 # デフォルト値: 1
 EnchantTimes = 1
 
-## 舐め能力がモッド機能に必要かどうか
+## 舐めに成功するたびに行うエンチャント抽選の回数
+# タイプ: Integer
+# デフォルト値: 1
+# 有効範囲: 1-10
+# 説明: 同じエンチャントが複数回選ばれた場合、そのレベルが加算されます
+EnchantCount = 1
+
+## 「エヘカトルの祝福」特性がモッド機能に必要かどうか
 # タイプ: Boolean
 # デフォルト値: true
-# 説明: falseに設定すると、舐め能力を持つ黒猫がいなくてもモッドが動作します
+# 説明: false に設定すると、この特性を持つキャラクターがいなくてもモッドが動作します
 RequireLickAbility = true
 ```
+
+起動時に各機能は `Applied`、`Disabled`、`Incompatible` のいずれかをログに出力します。ゲーム更新で一部のパッチが非互換になった場合、その機能を無効化し、具体的な理由を記録します。
 
 ## プロジェクトリンク
 

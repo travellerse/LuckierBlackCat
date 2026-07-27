@@ -1,166 +1,150 @@
+---
 name: Release
 
-on:
+"on":
   push:
-    branches: [ master ]
+    tags: ["v*"]
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., 1.0.0)'
+        description: Release version without the v prefix
         required: true
-        default: '1.0.0'
+        default: 2.0.0
       prerelease:
-        description: 'Is this a pre-release?'
+        description: Publish as a prerelease
         required: false
         default: false
         type: boolean
 
+permissions:
+  contents: write
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
 jobs:
   release:
-    runs-on: windows-latest
-    
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Download CI artifacts
-      id: download-artifacts
-      if: github.event_name == 'push'
-      uses: actions/download-artifact@v4
-      with:
-        name: LuckierBlackCat-Release-${{ github.sha }}
-        path: downloaded-artifacts/
-      continue-on-error: true
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Setup .NET Framework (if artifacts not available)
-      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Setup NuGet (if artifacts not available)
-      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
-      uses: nuget/setup-nuget@v2
-
-    - name: Restore and Build (if artifacts not available)
-      if: steps.download-artifacts.outcome == 'failure' || github.event_name == 'workflow_dispatch'
-      run: |
-        nuget restore LuckierBlackCat.sln
-        msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU"
-
-    - name: Get version from input or extract from commit
-      id: get_version
-      run: |
-        if ("${{ github.event.inputs.version }}" -ne "") {
-          $version = "${{ github.event.inputs.version }}"
-        } else {
-          # 尝试从最新的commit message中提取版本号
-          $commitMessage = git log -1 --pretty=%s
-          Write-Host "Commit message: $commitMessage"
-          if ($commitMessage -and $commitMessage -match "Release\s+v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
-            $version = $matches[1]
-            Write-Host "Extracted version from commit: $version"
-          } elseif ($commitMessage -and $commitMessage -match "v?(\d+\.\d+\.\d+(?:\.\d+)?)") {
-            $version = $matches[1]
-            Write-Host "Extracted version from commit: $version"
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if ($env:EVENT_NAME -eq "workflow_dispatch") {
+            $version = $env:INPUT_VERSION
           } else {
-            # 如果没有找到版本号，使用当前日期生成
-            $version = "$(Get-Date -Format 'yyyy.MM.dd').$(git rev-list --count HEAD)"
-            Write-Host "Generated version: $version"
+            $version = $env:REF_NAME -replace '^v', ''
           }
-        }
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-        echo "Release version: $version"
 
-    - name: Restore NuGet packages
-      run: nuget restore LuckierBlackCat.sln
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Version must use semantic version format: $version"
+          }
 
-    - name: Build Release
-      run: msbuild LuckierBlackCat.sln /p:Configuration=Release /p:Platform="Any CPU"
+          "value=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
 
-    - name: Create release package
-      run: |
-        $version = "${{ steps.get_version.outputs.version }}"
-        $packageName = "LuckierBlackCat-v$version"
-        
-        # 创建发布目录
-        New-Item -ItemType Directory -Path "release" -Force
-        New-Item -ItemType Directory -Path "release/$packageName" -Force
-        
-        # 确定源文件路径
-        if (Test-Path "downloaded-artifacts/LuckierBlackCat.dll") {
-          $sourcePath = "downloaded-artifacts"
-          Write-Host "使用CI构建的产物"
-        } else {
-          $sourcePath = "bin/Release"
-          Write-Host "使用本地构建的产物"
-        }
-        
-        # 复制构建产物
-        Copy-Item "$sourcePath/LuckierBlackCat.dll" "release/$packageName/"
-        Copy-Item "$sourcePath/package.xml" "release/$packageName/" -ErrorAction SilentlyContinue
-        Copy-Item "$sourcePath/preview.jpg" "release/$packageName/" -ErrorAction SilentlyContinue
-        Copy-Item "$sourcePath/*.md" "release/$packageName/" -ErrorAction SilentlyContinue
-        
-        # 复制根目录的文档文件
-        Copy-Item "LICENSE.txt" "release/$packageName/" -ErrorAction SilentlyContinue
-        Copy-Item "README.md" "release/$packageName/" -ErrorAction SilentlyContinue
-        Copy-Item "README_EN.md" "release/$packageName/" -ErrorAction SilentlyContinue
-        Copy-Item "README_JP.md" "release/$packageName/" -ErrorAction SilentlyContinue
-        
-        # 创建ZIP文件
-        Compress-Archive -Path "release/$packageName/*" -DestinationPath "release/$packageName.zip"
-        
-        echo "package_name=$packageName" >> $env:GITHUB_OUTPUT
-        echo "package_path=release/$packageName.zip" >> $env:GITHUB_OUTPUT
-      id: package
+      - name: Verify repository version
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          $version = $env:RELEASE_VERSION
+          $package = Get-Content package.xml -Raw
+          $expectedVersion = [regex]::Escape($version)
+          $compatibility = [regex]::Escape("+elin.0.23.325.patch.2")
+          $versionPattern = "<version>$expectedVersion$compatibility</version>"
+          if ($package -notmatch $versionPattern) {
+            throw "package.xml is incompatible with mod $version."
+          }
 
-    - name: Generate changelog
-      id: changelog
-      run: |
-        # 获取最新的tag
-        $latestTag = git describe --tags --abbrev=0 2>$null
-        if ($latestTag) {
-          $commits = git log --pretty=format:"%s" "$latestTag..HEAD"
-        } else {
-          $commits = git log --pretty=format:"%s" -10
-        }
-        
-        # 过滤掉Release相关的commit，只保留有意义的更新
-        $filteredCommits = $commits | Where-Object { 
-          $_ -notmatch "^Release\s+v?\d+" -and 
-          $_ -notmatch "^Re\s+Release" -and
-          $_ -ne "" 
-        }
-        
-        # 格式化changelog
-        if ($filteredCommits) {
-          $changelog = ($filteredCommits | ForEach-Object { "- $_" }) -join "`n"
-        } else {
-          $changelog = "- Initial release"
-        }
-        
-        $changelogText = "## 更新内容 / Changes`n`n$changelog`n`n## 安装方法 / Installation`n`n### 手动安装 / Manual Installation`n1. 下载并解压 \`${{ steps.package.outputs.package_name }}.zip\``n2. 将mod文件夹放入 \`Elin\Package\\` 目录`n3. 进入游戏，启用模组`n`n### Steam创意工坊 / Steam Workshop`n订阅：[Steam创意工坊页面](https://steamcommunity.com/sharedfiles/filedetails/?id=3366709105)`n`n## 兼容性 / Compatibility`n- 游戏版本 / Game Version: Elin`n- 框架要求 / Framework: BepInEx"
-        
-        # 转义换行符用于GitHub输出
-        $changelogText = $changelogText -replace "`r`n", "%0A" -replace "`n", "%0A"
-        echo "changelog=$changelogText" >> $env:GITHUB_OUTPUT
+      - name: Restore
+        run: dotnet restore LuckierBlackCat.sln
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: v${{ steps.get_version.outputs.version }}
-        name: LuckierBlackCat v${{ steps.get_version.outputs.version }}
-        body: ${{ steps.changelog.outputs.changelog }}
-        files: ${{ steps.package.outputs.package_path }}
-        prerelease: ${{ github.event.inputs.prerelease }}
-        draft: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: >-
+          dotnet build LuckierBlackCat.sln
+          --configuration Release
+          --no-restore
 
-    - name: Upload Release Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ steps.package.outputs.package_name }}
-        path: release/${{ steps.package.outputs.package_name }}.zip
-        retention-days: 90
+      - name: Test
+        run: dotnet test LuckierBlackCat.sln --configuration Release --no-build
+
+      - name: Package
+        id: package
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          $version = $env:RELEASE_VERSION
+          $packageName = "LuckierBlackCat-v$version"
+          $packageDirectory = Join-Path release $packageName
+          New-Item -ItemType Directory -Path $packageDirectory -Force |
+            Out-Null
+
+          $files = @(
+            "bin/Release/LuckierBlackCat.dll",
+            "bin/Release/LuckierBlackCat.Core.dll",
+            "bin/Release/LuckierBlackCat.Patching.dll",
+            "package.xml",
+            "preview.jpg",
+            "LICENSE.txt",
+            "README.md",
+            "README_EN.md",
+            "README_JP.md"
+          )
+
+          foreach ($file in $files) {
+            if (-not (Test-Path $file -PathType Leaf)) {
+              throw "Required package file is missing: $file"
+            }
+            Copy-Item $file $packageDirectory
+          }
+
+          $langConfigDirectory = Join-Path $packageDirectory "LangConfig"
+          New-Item -ItemType Directory -Path $langConfigDirectory -Force |
+            Out-Null
+          foreach ($language in @("CN", "EN", "JP")) {
+            $file = "bin/Release/LangConfig/$language.xlsx"
+            if (-not (Test-Path $file -PathType Leaf)) {
+              throw "Required language config is missing: $file"
+            }
+            Copy-Item $file $langConfigDirectory
+          }
+
+          $archive = "release/$packageName.zip"
+          Compress-Archive -Path "$packageDirectory/*" -DestinationPath $archive
+          "name=$packageName" >> $env:GITHUB_OUTPUT
+          "path=$archive" >> $env:GITHUB_OUTPUT
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.name }}
+          path: ${{ steps.package.outputs.path }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: LuckierBlackCat v${{ steps.version.outputs.value }}
+          generate_release_notes: true
+          files: ${{ steps.package.outputs.path }}
+          prerelease: ${{ inputs.prerelease || false }}
