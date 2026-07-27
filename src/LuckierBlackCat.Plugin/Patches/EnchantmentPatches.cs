@@ -13,6 +13,9 @@ namespace LuckierBlackCat.Patches
         new Type[] { typeof(Chara), typeof(bool), typeof(Chara), typeof(BodySlot) })]
     public static class ThingTryLickEnchantPatch
     {
+        private const string EnchantmentRollSummaryMessage =
+            "luckierBlackCat_enchantmentRollSummary";
+
         public static void Validate()
         {
             var target = RequireTargetMethod();
@@ -42,10 +45,26 @@ namespace LuckierBlackCat.Patches
         public static Element ApplyEnchantments(Thing item, int baseLevel)
         {
             int level = AdjustLevel(baseLevel);
-            return LickRules.RollEnchantments(
-                ConfigManager.EnchantCount.Value,
+            int rollCount = LickRules.NormalizeEnchantCount(ConfigManager.EnchantCount.Value);
+            int successCount = 0;
+            var affectedEnchantments = new HashSet<int>();
+            Element lastEnchant = LickRules.RollEnchantments(
+                rollCount,
                 level,
-                item.AddEnchant);
+                item.AddEnchant,
+                enchant =>
+                {
+                    successCount++;
+                    affectedEnchantments.Add(enchant.id);
+                });
+
+            Msg.Say(
+                EnchantmentRollSummaryMessage,
+                item,
+                rollCount.ToString(),
+                successCount.ToString(),
+                affectedEnchantments.Count.ToString());
+            return lastEnchant;
         }
 
         public static int AdjustLevel(int baseLevel)

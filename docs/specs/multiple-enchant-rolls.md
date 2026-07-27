@@ -12,7 +12,7 @@ independently from the existing enchantment-level multiplier.
 - C# targeting `net462` for the Elin and BepInEx plugin adapter.
 - Harmony transpilers for the scoped `Thing.TryLickEnchant` modification.
 - xUnit and Mono.Cecil for unit and compiled-plugin contract tests.
-- XLSX language tables consumed by Mod Config GUI.
+- XLSX language tables consumed by Mod Config GUI and Elin's runtime message system.
 
 ## Commands
 
@@ -28,19 +28,20 @@ independently from the existing enchantment-level multiplier.
 - `src/LuckierBlackCat.Patching` owns the exact IL call replacement.
 - `src/LuckierBlackCat.Plugin` owns configuration and repeated `Thing.AddEnchant` calls.
 - `tests` contains rule, transform, and compiled-plugin contract coverage.
-- `LangConfig` and the three README files contain player-facing configuration text.
+- `LangConfig`, `LangMod`, and the three README files contain player-facing text.
 
 ## Code Style
 
 Keep Elin objects in the Plugin layer and pass the game method into the tested Core rule. The
-patch helper returns the last successful enchantment so the original method can preserve its
-existing lick-state behavior.
+patch helper observes successful rolls for one player-facing summary, then returns the last
+successful enchantment so the original method can preserve its existing lick-state behavior.
 
 ```csharp
-return LickRules.RollEnchantments(
-    ConfigManager.EnchantCount.Value,
+Element lastEnchant = LickRules.RollEnchantments(
+    rollCount,
     adjustedLevel,
-    item.AddEnchant);
+    item.AddEnchant,
+    RecordSuccessfulRoll);
 ```
 
 ## Testing Strategy
@@ -49,7 +50,7 @@ return LickRules.RollEnchantments(
 - Patching tests require exactly one `get_LV` and `AddEnchant` anchor, replace only that call,
   and preserve instruction metadata.
 - Contract tests verify the compiled plugin exposes `EnchantCount` and routes the original
-  enchantment call through the scoped helper.
+  enchantment call through the scoped helper and Elin's game-log API.
 - The full solution test suite and repository checks must pass before publishing.
 
 ## Boundaries
@@ -68,6 +69,8 @@ return LickRules.RollEnchantments(
 - `EnchantCount = N` invokes `Thing.AddEnchant` exactly N times during one successful lick.
 - Every roll uses the existing adjusted level from `EnchantTimes` and black-cat saliva.
 - The helper returns the last non-null enchantment; Elin stores that ID as the lick marker.
+- Every successful lick writes one localized game-log summary containing the item, configured
+  roll count, successful roll count, and number of distinct affected enchantments.
 - A previously licked item remains ineligible for pickup and prayer licking.
 - Mod Config GUI and all README variants describe both configuration values distinctly.
 

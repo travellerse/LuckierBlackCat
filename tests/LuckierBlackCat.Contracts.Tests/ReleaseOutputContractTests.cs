@@ -40,6 +40,9 @@ public sealed class ReleaseOutputContractTests
     [InlineData("LangConfig/CN.xlsx")]
     [InlineData("LangConfig/EN.xlsx")]
     [InlineData("LangConfig/JP.xlsx")]
+    [InlineData("LangMod/CN/LuckierBlackCat.xlsx")]
+    [InlineData("LangMod/EN/LuckierBlackCat.xlsx")]
+    [InlineData("LangMod/JP/LuckierBlackCat.xlsx")]
     public void ReleaseOutputContainsRequiredResource(string fileName)
     {
         var path = Path.Combine(FindRepositoryRoot(), "bin", "Release", fileName);

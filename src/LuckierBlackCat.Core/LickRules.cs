@@ -119,6 +119,16 @@ public static class LickRules
         Func<int, T?> addEnchant)
         where T : class
     {
+        return RollEnchantments(count, level, addEnchant, null);
+    }
+
+    public static T? RollEnchantments<T>(
+        int count,
+        int level,
+        Func<int, T?> addEnchant,
+        Action<T>? onSuccess)
+        where T : class
+    {
         if (addEnchant is null)
         {
             throw new ArgumentNullException(nameof(addEnchant));
@@ -132,6 +142,7 @@ public static class LickRules
             if (enchant is not null)
             {
                 lastEnchant = enchant;
+                onSuccess?.Invoke(enchant);
             }
         }
 

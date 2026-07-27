@@ -25,6 +25,8 @@ unbounded equipment upgrade.
 - Use the same adjusted level for every roll.
 - Permit duplicate rolls so Elin can stack their levels.
 - Return the last successful result so Elin can retain its existing property 107 lick marker.
+- Write one localized game-log summary after each successful lick without persisting per-roll
+  provenance.
 - Preserve every existing eligibility and one-lick check.
 
 ## Alternatives Considered
@@ -46,5 +48,6 @@ unbounded equipment upgrade.
 
 - One lick can add multiple enchantments while the item remains marked as already licked.
 - Only the last successful roll receives Elin's black-cat enchantment icon.
+- The game log reports total rolls, successful rolls, and distinct affected enchantments.
 - Duplicate rolls may produce fewer distinct enchantment lines while increasing their levels.
 - The transpiler retains one exact anchor that can be preflighted after Elin updates.

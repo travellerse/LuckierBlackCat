@@ -19,6 +19,7 @@ A BepInEx mod developed for the Elin game that significantly enhances the black 
 - **Batch Licking During Prayer** - Automatically licks eligible equipment in all accessible player containers, including nested backpacks
 - **Enhanced Licking Effects** - Strengthens the black cat's licking effects based on the quantity of [Black Cat's Saliva]
 - **Multiple Enchantments per Lick** - Configures each successful lick to roll enchantments 1 to 10 times
+- **Lick Result Log** - Summarizes rolls, successes, and distinct enchantments in the game log after each item
 
 ### Usage Requirements
 

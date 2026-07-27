@@ -64,6 +64,9 @@
     <Content Include="..\..\LangConfig\*.xlsx"
              Link="LangConfig\%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\LangMod\**\*.xlsx"
+             Link="LangMod\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="CopyToElinPackage"
@@ -78,12 +81,16 @@
       <ElinPackageFile Include="$(TargetDir)LICENSE.txt" />
       <ElinPackageFile Include="$(TargetDir)README*.md" />
       <ElinLangConfigFile Include="$(TargetDir)LangConfig\*.xlsx" />
+      <ElinLangModFile Include="$(TargetDir)LangMod\**\*.xlsx" />
     </ItemGroup>
     <Copy SourceFiles="@(ElinPackageFile)"
           DestinationFolder="$(ElinPackageDir)"
           SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(ElinLangConfigFile)"
           DestinationFolder="$(ElinPackageDir)\LangConfig"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ElinLangModFile)"
+          DestinationFolder="$(ElinPackageDir)\LangMod\%(RecursiveDir)"
           SkipUnchangedFiles="true" />
   </Target>
 </Project>

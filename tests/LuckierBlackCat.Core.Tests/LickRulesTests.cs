@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace LuckierBlackCat.Core.Tests;
@@ -209,6 +210,26 @@ public sealed class LickRulesTests
         });
 
         Assert.Same(lastEnchant, result);
+    }
+
+    [Fact]
+    public void EnchantmentRollsReportEverySuccessfulResult()
+    {
+        var rolls = 0;
+        var repeatedEnchant = new object();
+        var observed = new List<object>();
+
+        LickRules.RollEnchantments(
+            3,
+            42,
+            _ =>
+            {
+                rolls++;
+                return rolls == 2 ? null : repeatedEnchant;
+            },
+            observed.Add);
+
+        Assert.Equal(new[] { repeatedEnchant, repeatedEnchant }, observed);
     }
 
     [Fact]

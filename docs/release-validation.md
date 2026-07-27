@@ -43,11 +43,13 @@ test, and the configuration was restored after the matrix.
 - [ ] Change `EnchantTimes` between launches; verify the runtime value changes enhancement.
 - [ ] Set `EnchantCount = 1`; verify a successful lick performs one enchantment roll.
 - [ ] Set `EnchantCount = 3`; verify a successful lick performs three enchantment rolls,
-  duplicate results stack, and the item remains ineligible for another lick.
+  duplicate results stack, the item remains ineligible for another lick, and exactly one
+  summary appears in the game log with the correct item and roll counts.
 - [ ] Install Mod Config GUI 0.1.19; open Luckier Black Cat in Mod Viewer and verify
   all seven settings appear without an entry-point error.
 - [ ] Switch Elin between CN, EN, and JP; verify the Mod Config GUI labels and tooltips
-  use the matching `LangConfig` workbook.
+  use the matching `LangConfig` workbook and the lick summary uses the matching `LangMod`
+  workbook.
 - [ ] Change a setting in Mod Config GUI, save, and restart; verify
   `BepInEx/config/LuckierBlackCat.cfg` retains the new value.
 - [ ] Test with another enchantment mod; verify unrelated enchantment generation is unchanged.

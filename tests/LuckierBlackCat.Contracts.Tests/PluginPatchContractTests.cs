@@ -131,6 +131,13 @@ public sealed class PluginPatchContractTests
             instruction.Operand is MethodReference method
             && method.DeclaringType.FullName == "LuckierBlackCat.Core.LickRules"
             && method.Name == "RollEnchantments");
+        Assert.Contains(helper.Body.Instructions, instruction =>
+            instruction.Operand is string value
+            && value == "luckierBlackCat_enchantmentRollSummary");
+        Assert.Contains(helper.Body.Instructions, instruction =>
+            instruction.Operand is MethodReference method
+            && method.DeclaringType.FullName == "Msg"
+            && method.Name == "Say");
     }
 
     [Fact]
